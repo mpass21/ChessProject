@@ -27,7 +27,8 @@ class MoveValidity(Enum):
             return 'Invalid -- must move out of check.'
 
 
-# TODO: create UndoException
+class UndoException(Exception):
+    pass
 
 
 class ChessModel:
