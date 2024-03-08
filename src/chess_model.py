@@ -27,7 +27,8 @@ class MoveValidity(Enum):
             return 'Invalid -- must move out of check.'
 
 
-# TODO: create UndoException
+class UndoException(Exception):
+    pass
 
 
 class ChessModel:
@@ -40,17 +41,17 @@ class ChessModel:
         
     def is_complete(self):
         pass
-    def is_valid_move(self):
+    def is_valid_move(self, move):
         pass
-    def move(self):
+    def move(self, move):
         pass
-    def in_check(self):
+    def in_check(self, p):
         pass
-    def piece_at(self):
+    def piece_at(self, row: int, col: int):
         pass
     def set_next_player(self):
         pass
-    def set_piece(self):
+    def set_piece(self, row: int, col: int, piece: ChessPiece):
         pass
     def undo(self):
         pass
