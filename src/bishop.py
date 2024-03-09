@@ -9,7 +9,11 @@ class Bishop(ChessPiece):
         pass
 
     def is_valid_move(self, move, board):
-        valid = False
+        valid = ChessPiece.is_valid_move(self, move, board)
+        if valid:
+            valid = False
+        else:
+            return valid
         for i in range(1, 7):
             if move.to_row + i < 7:
                 if move.to_col + i < 7:

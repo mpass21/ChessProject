@@ -9,7 +9,11 @@ class King(ChessPiece):
         pass
 
     def is_valid_move(self, move, board):
-        valid = False
+        valid = ChessPiece.is_valid_move(self, move, board)
+        if valid:
+            valid = False
+        else:
+            return valid
         if move.to_row + 1 < 7:
             if board[move.to_row + 1][move.to_col] == board[move.from_row][move.from_col]:
                 valid = True
