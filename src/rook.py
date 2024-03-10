@@ -3,10 +3,10 @@ from chess_piece import ChessPiece
 
 class Rook(ChessPiece):
     def __str__(self):
-        return "rook"
+        return "Rook"
 
     def type(self):
-        return 'rook'
+        return "Rook"
 
     def is_valid_move(self, move, board):
         valid = super().is_valid_move(move, board)

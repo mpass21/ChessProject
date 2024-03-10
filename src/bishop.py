@@ -3,10 +3,10 @@ from chess_piece import ChessPiece
 
 class Bishop(ChessPiece):
     def __str__(self):
-        return "bishop"
+        return "Bishop"
 
     def type(self):
-        return 'bishop'
+        return 'Bishop'
 
     def is_valid_move(self, move, board):
         valid = super().is_valid_move(move, board)

@@ -41,10 +41,47 @@ class ChessModel:
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None]]
-        self.__player = None
-        self.__nrows = 0
-        self.__ncols = 0
+        self.__player = Player.BLACK
+        self.__nrows = 8
+        self.__ncols = 8
         self.__message_code = None
+        self.set_piece(0,0,Rook(self.current_player))
+        self.set_piece(0, 1, Knight(self.current_player))
+        self.set_piece(0, 2, Bishop(self.current_player))
+        self.set_piece(0, 3, Queen(self.current_player))
+        self.set_piece(0, 4, King(self.current_player))
+        self.set_piece(0, 5, Bishop(self.current_player))
+        self.set_piece(0, 6, Knight(self.current_player))
+        self.set_piece(0, 7, Rook(self.current_player))
+        for i in range(0,8):
+            self.set_piece(1, i, Pawn(self.current_player))
+        self.set_next_player()
+        self.set_piece(7, 0, Rook(self.current_player))
+        self.set_piece(7, 1, Knight(self.current_player))
+        self.set_piece(7, 2, Bishop(self.current_player))
+        self.set_piece(7, 3, Queen(self.current_player))
+        self.set_piece(7, 4, King(self.current_player))
+        self.set_piece(7, 5, Bishop(self.current_player))
+        self.set_piece(7, 6, Knight(self.current_player))
+        self.set_piece(7, 7, Rook(self.current_player))
+        for i in range(0,8):
+            self.set_piece(6, i, Pawn(self.current_player))
+
+    @property
+    def nrows(self):
+        return self.__nrows
+
+    @property
+    def ncols(self):
+        return self.__ncols
+
+    @property
+    def current_player(self):
+        return self.__player
+
+    @property
+    def messageCode(self):
+        return self.__message_code
         
     def is_complete(self):
         pass
@@ -55,11 +92,21 @@ class ChessModel:
     def in_check(self, p):
         pass
     def piece_at(self, row: int, col: int):
-        pass
+        return self.board[row][col]
     def set_next_player(self):
-        pass
+        self.__player = Player.next(self.__player)
+
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        pass
+        if 0 <= row <= self.__nrows:
+            if 0 <= col <= self.__ncols:
+                if piece is None or ChessPiece:
+                    self.board[row][col] = piece
+                else:
+                    raise TypeError
+            else:
+                raise ValueError
+        else:
+            raise ValueError
     def undo(self):
         pass
 
