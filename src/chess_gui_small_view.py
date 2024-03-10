@@ -45,7 +45,7 @@ class GUI:
     @classmethod
     def load_images(cls):
         def load_image(color, ptype):
-            SS = pg.image.load('./images/pieces.png')
+            SS = pg.image.load('./src/images/pieces.png')
             a = 105
             surf = pg.Surface((a,a), pg.SRCALPHA)
             surf.blit(SS, (0, 0), pg.rect.Rect(a*ptype.value, color.value*a, a, a))
@@ -68,6 +68,7 @@ class GUI:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     x, y = pg.mouse.get_pos()
                     y, x = self.__get_coords__(y, x)
+                    print(y,x)
                     try:
                         piece = self.__model.piece_at(y, x)
                     except IndexError:

@@ -33,12 +33,22 @@ class UndoException(Exception):
 
 class ChessModel:
     def __init__(self):
-        self.board = []
         self.__player = None
-        self.__nrows = 0
-        self.__ncols = 0
-        self.__message_code = None
-        
+        self.__nrows = 8
+        self.__ncols = 8
+        self.board = self.createBoard(self.__nrows, self.__ncols)
+
+
+    def createBoard(self, rows, cols):
+        board = [] 
+        for _ in range(rows):
+            row = [" "] * cols
+            board.append(row)
+        return board
+    def printBoard(self):
+        for row in self.board:
+            print(row)
+
     def is_complete(self):
         pass
     def is_valid_move(self, move):
@@ -52,9 +62,20 @@ class ChessModel:
     def set_next_player(self):
         pass
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        pass
+        self.board[row][col] = "rook"
     def undo(self):
         pass
+
+joe = Player(1)
+pawn = Pawn(joe)
+model = ChessModel()
+
+model.set_piece(0,7, pawn)
+
+model.printBoard()
+
+
+
 
 
 
