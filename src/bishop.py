@@ -14,7 +14,7 @@ class Bishop(ChessPiece):
             valid = False
         else:
             return valid
-        for i in range(1, 7):
+        for i in range(1, 8):
             if move.to_row + i < 7:
                 if move.to_col + i < 7:
                     if board[move.to_row + i][move.to_col + i] == board[move.from_row][move.from_col]:

@@ -33,7 +33,14 @@ class UndoException(Exception):
 
 class ChessModel:
     def __init__(self):
-        self.board = []
+        self.board = [[None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None]]
         self.__player = None
         self.__nrows = 0
         self.__ncols = 0
@@ -55,8 +62,6 @@ class ChessModel:
         pass
     def undo(self):
         pass
-
-
 
 
     

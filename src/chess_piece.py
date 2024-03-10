@@ -33,6 +33,10 @@ class ChessPiece(ABC):
             valid = False
         if board[move.from_row][move.from_col] != self:
             valid = False
-        if board[move.to_row][move.to_col].player == self.player:
+        if board[move.to_row][move.to_col] is None:
+            pass
+        elif board[move.to_row][move.to_col].player == self.player:
             valid = False
         return valid
+
+
