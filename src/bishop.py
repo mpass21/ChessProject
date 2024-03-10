@@ -9,7 +9,7 @@ class Bishop(ChessPiece):
         return 'bishop'
 
     def is_valid_move(self, move, board):
-        valid = ChessPiece.is_valid_move(self, move, board)
+        valid = super().is_valid_move(move, board)
         if valid:
             valid = False
         else:
