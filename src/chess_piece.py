@@ -28,7 +28,7 @@ class ChessPiece(ABC):
             return False
         if board[move.to_row][move.to_col] is None:
             pass
-        elif board[move.to_row][move.to_col].player == self.player:
+        if board[move.to_row][move.to_col].player == self.player:
             return False
         return True
 
