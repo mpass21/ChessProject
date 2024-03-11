@@ -8,10 +8,10 @@ class Knight(ChessPiece):
         super().__init__(player)
 
     def __str__(self):
-        return "knight"
+        return "Knight"
 
     def type(self):
-        return "knight"
+        return "Knight"
 
     def is_valid_move(self, move: Move, board):
         start_row, start_col = move.from_row, move.from_col
