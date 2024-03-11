@@ -87,10 +87,10 @@ class ChessModel:
         pass
 
     def is_valid_move(self, move):
-        pass
+        return True
 
     def move(self, move):
-        if str(self.piece_at(move.from_row, move.from_col)) == 'Pawn' and (move.to_row == 0 or move.to_row == 7):
+        if isinstance(self.piece_at(move.from_row, move.from_col), Pawn) and (move.to_row == 0 or move.to_row == 7):
             self.set_piece(move.to_row, move.to_col, Queen(self.current_player))
         else:
             self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
@@ -98,44 +98,59 @@ class ChessModel:
         self.set_next_player()
 
     def in_check(self, p):
-        pass
-        """a = 0
+        a = 0
         b = 0
         for i in range(0, 8):
             for j in range(0, 8):
-                if str(self.piece_at(i, j)) == 'King' and self.piece_at(i, j).player == p:
+                if isinstance(self.piece_at(i, j), King) and self.piece_at(i, j).player == p:
                     a = i
                     b = j
                     break
         if (a + 2) < 8:
             if b + 1 < 8:
-                if str(self.piece_at(a+2, b+1)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                if isinstance(self.piece_at(a+2, b+1), Knight) and self.piece_at(a+2, b+1).player != p:
                     return True
             if b - 1 >= 0:
-                if str(self.piece_at(a + 2, b - 1)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                if isinstance(self.piece_at(a+2, b-1), Knight) and self.piece_at(a + 2, b - 1).player != p:
                     return True
         if (a - 2) >= 0:
             if b + 1 < 8:
-                if str(self.piece_at(a-2, b+1)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                if isinstance(self.piece_at(a-2, b+1), Knight) and self.piece_at(a+2, b+1).player != p:
                     return True
             if b - 1 >= 0:
-                if str(self.piece_at(a - 2, b - 1)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                if isinstance(self.piece_at(a+2, b-1), Knight) and self.piece_at(a + 2, b - 1).player != p:
                     return True
         if (b + 2) < 8:
             if a + 1 < 8:
-                if str(self.piece_at(a+1, b+2)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                if isinstance(self.piece_at(a+2, b+1), Knight) and self.piece_at(a+2, b+1).player != p:
                     return True
             if a - 1 >= 0:
-                if str(self.piece_at(a - 1, b + 2)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                if isinstance(self.piece_at(a-1, b+2), Knight) and self.piece_at(a + 2, b - 1).player != p:
                     return True
         if (b - 2) >= 0:
             if a + 1 < 8:
-                if str(self.piece_at(a+1, b-2)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                if isinstance(self.piece_at(a+1, b-2), Knight) and self.piece_at(a+2, b+1).player != p:
                     return True
             if a - 1 >= 0:
-                if str(self.piece_at(a - 1, b - 2)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                if isinstance(self.piece_at(a-1, b-2), Knight) and self.piece_at(a + 2, b - 1).player != p:
                     return True
-        for num in range(1, 8):"""
+        if p == Player.BLACK:
+            if a - 1 >= 0:
+                if b + 1 < 8:
+                    if isinstance(self.piece_at(a-1, b+1), Pawn):
+                        return True
+                if b - 1 >= 0:
+                    if isinstance(self.piece_at(a-1, b-1), Pawn):
+                        return True
+        else:
+            if a + 1 >= 0:
+                if b + 1 < 8:
+                    if isinstance(self.piece_at(a+1, b+1), Pawn):
+                        return True
+                if b - 1 >= 0:
+                    if isinstance(self.piece_at(a+1, b-1), Pawn):
+                        return True
+        return False
 
 
     def piece_at(self, row: int, col: int):
