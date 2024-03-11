@@ -33,59 +33,131 @@ class UndoException(Exception):
 
 class ChessModel:
     def __init__(self):
-        self.__player = None
+        self.board = [[None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None],
+                      [None, None, None, None, None, None, None, None]]
+        self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
-        self.board = self.createBoard(self.__nrows, self.__ncols)
+        self.__message_code = None
+        self.set_piece(0, 0, Rook(self.current_player))
+        self.set_piece(0, 1, Knight(self.current_player))
+        self.set_piece(0, 2, Bishop(self.current_player))
+        self.set_piece(0, 3, Queen(self.current_player))
+        self.set_piece(0, 4, King(self.current_player))
+        self.set_piece(0, 5, Bishop(self.current_player))
+        self.set_piece(0, 6, Knight(self.current_player))
+        self.set_piece(0, 7, Rook(self.current_player))
+        for i in range(0, 8):
+            self.set_piece(1, i, Pawn(self.current_player))
+        self.set_next_player()
+        self.set_piece(7, 0, Rook(self.current_player))
+        self.set_piece(7, 1, Knight(self.current_player))
+        self.set_piece(7, 2, Bishop(self.current_player))
+        self.set_piece(7, 3, Queen(self.current_player))
+        self.set_piece(7, 4, King(self.current_player))
+        self.set_piece(7, 5, Bishop(self.current_player))
+        self.set_piece(7, 6, Knight(self.current_player))
+        self.set_piece(7, 7, Rook(self.current_player))
+        for i in range(0, 8):
+            self.set_piece(6, i, Pawn(self.current_player))
 
+    @property
+    def nrows(self):
+        return self.__nrows
 
-    def createBoard(self, rows, cols):
-        board = [] 
-        for _ in range(rows):
-            row = [None] * cols
-            board.append(row)
-        return board
-    def printBoard(self):
-        for row in self.board:
-            print(row)
-    def getBoard(self):
-        return self.board
+    @property
+    def ncols(self):
+        return self.__ncols
+
+    @property
+    def current_player(self):
+        return self.__player
+
+    @property
+    def messageCode(self):
+        return self.__message_code
+
     def is_complete(self):
         pass
+
     def is_valid_move(self, move):
         pass
+
     def move(self, move):
-        pass
+        if str(self.piece_at(move.from_row, move.from_col)) == 'Pawn' and (move.to_row == 0 or move.to_row == 7):
+            self.set_piece(move.to_row, move.to_col, Queen(self.current_player))
+        else:
+            self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
+        self.board[move.from_row][move.from_col] = None
+        self.set_next_player()
+
     def in_check(self, p):
         pass
+        """a = 0
+        b = 0
+        for i in range(0, 8):
+            for j in range(0, 8):
+                if str(self.piece_at(i, j)) == 'King' and self.piece_at(i, j).player == p:
+                    a = i
+                    b = j
+                    break
+        if (a + 2) < 8:
+            if b + 1 < 8:
+                if str(self.piece_at(a+2, b+1)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                    return True
+            if b - 1 >= 0:
+                if str(self.piece_at(a + 2, b - 1)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                    return True
+        if (a - 2) >= 0:
+            if b + 1 < 8:
+                if str(self.piece_at(a-2, b+1)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                    return True
+            if b - 1 >= 0:
+                if str(self.piece_at(a - 2, b - 1)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                    return True
+        if (b + 2) < 8:
+            if a + 1 < 8:
+                if str(self.piece_at(a+1, b+2)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                    return True
+            if a - 1 >= 0:
+                if str(self.piece_at(a - 1, b + 2)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                    return True
+        if (b - 2) >= 0:
+            if a + 1 < 8:
+                if str(self.piece_at(a+1, b-2)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
+                    return True
+            if a - 1 >= 0:
+                if str(self.piece_at(a - 1, b - 2)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
+                    return True
+        for num in range(1, 8):"""
+
+
     def piece_at(self, row: int, col: int):
-        pass
+        return self.board[row][col]
+
     def set_next_player(self):
-        pass
+        self.__player = Player.next(self.__player)
+
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        self.board[row][col] = "YYYY"
+        if 0 <= row <= self.__nrows:
+            if 0 <= col <= self.__ncols:
+                if piece is None or ChessPiece:
+                    self.board[row][col] = piece
+                else:
+                    raise TypeError
+            else:
+                raise ValueError
+        else:
+            raise ValueError
+
     def undo(self):
         pass
-
-
-
-
-joe = Player(1)
-pawn = Pawn(joe)
-model = ChessModel()
-
-model.printBoard()
-print("test")
-start = 1
-end = 2
-
-for i in range(start+1, end):
-    print(i)
-    model.set_piece(3,i,pawn)
-model.printBoard()
-
-
-
 
 
 

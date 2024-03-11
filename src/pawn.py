@@ -3,6 +3,7 @@ from chess_piece import ChessPiece
 from move import Move
 from player import Player
 
+
 class Pawn(ChessPiece):
     def __init__(self, player: Player):
         super().__init__(player)
@@ -16,7 +17,7 @@ class Pawn(ChessPiece):
     def is_valid_move(self, move: Move, board):
         start_row, start_col = move.from_row, move.from_col
         end_row, end_col = move.to_row, move.to_col
-        
+
         # Setting the variables based on color
         if self.player == Player.WHITE:
             direction = -1
@@ -24,12 +25,13 @@ class Pawn(ChessPiece):
         else:
             direction = 1
             begin_row = 1
-            
+
         if move.from_col == move.to_col and move.from_row == move.to_row:
             return False
         if not (0 <= start_row < 8 and 0 <= start_col < 8 and 0 <= end_row < 8 and 0 <= end_col < 8):
             return False
-        if board[start_row][start_col].player !=self.player:
+
+        if board[start_row][start_col].player != self.player:
             return False
         if board[start_row][start_col] != self:
             return False
@@ -47,9 +49,8 @@ class Pawn(ChessPiece):
 
 
 
-        
-       
-        
+
+
 
 
 
