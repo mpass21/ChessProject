@@ -17,9 +17,11 @@ class King(ChessPiece):
             return False
         if abs(move.to_col - move.from_col) > 1 or abs(move.to_row - move.from_row) > 1:
             return False
+        if board[move.to_row + 1][move.to_col] == board[move.from_row][move.from_col]:
+            return True
+        if board[move.to_row - 1][move.to_col] == board[move.from_row][move.from_col]:
+            return True
         if move.to_row + 1 < 8:
-            if board[move.to_row + 1][move.to_col] == board[move.from_row][move.from_col]:
-                return True
             if move.to_col + 1 < 8:
                 if board[move.to_row + 1][move.to_col + 1] == board[move.from_row][move.from_col]:
                     return True
@@ -31,8 +33,6 @@ class King(ChessPiece):
                 if board[move.to_row][move.to_col - 1] == board[move.from_row][move.from_col]:
                     return True
         if move.to_row - 1 >= 0:
-            if board[move.to_row - 1][move.to_col] == board[move.from_row][move.from_col]:
-                return True
             if move.to_col + 1 < 8:
                 if board[move.to_row - 1][move.to_col + 1] == board[move.from_row][move.from_col]:
                     return True
