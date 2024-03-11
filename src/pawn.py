@@ -29,7 +29,6 @@ class Pawn(ChessPiece):
             return False
         if not (0 <= start_row < 8 and 0 <= start_col < 8 and 0 <= end_row < 8 and 0 <= end_col < 8):
             return False
-
         if board[start_row][start_col].player !=self.player:
             return False
         if board[start_row][start_col] != self:

@@ -42,13 +42,14 @@ class ChessModel:
     def createBoard(self, rows, cols):
         board = [] 
         for _ in range(rows):
-            row = [" "] * cols
+            row = [None] * cols
             board.append(row)
         return board
     def printBoard(self):
         for row in self.board:
             print(row)
-
+    def getBoard(self):
+        return self.board
     def is_complete(self):
         pass
     def is_valid_move(self, move):
@@ -62,16 +63,25 @@ class ChessModel:
     def set_next_player(self):
         pass
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        self.board[row][col] = "rook"
+        self.board[row][col] = "YYYY"
     def undo(self):
         pass
+
+
+
 
 joe = Player(1)
 pawn = Pawn(joe)
 model = ChessModel()
 
-model.set_piece(0,7, pawn)
+model.printBoard()
+print("test")
+start = 1
+end = 2
 
+for i in range(start+1, end):
+    print(i)
+    model.set_piece(3,i,pawn)
 model.printBoard()
 
 
