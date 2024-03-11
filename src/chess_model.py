@@ -90,11 +90,10 @@ class ChessModel:
         return True
 
     def move(self, move):
-        piece = self.piece_at(move.from_row, move.from_col)
-        if piece == Pawn and move.to_row == 0:
+        if str(self.piece_at(move.from_row, move.from_col)) == 'Pawn' and (move.to_row == 0 or move.to_row == 7):
             self.set_piece(move.to_row, move.to_col, Queen(self.current_player))
         else:
-            self.set_piece(move.to_row, move.to_col, piece)
+            self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
         self.board[move.from_row][move.from_col] = None
         self.set_next_player()
     def in_check(self, p):
