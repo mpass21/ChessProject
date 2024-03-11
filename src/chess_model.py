@@ -87,10 +87,12 @@ class ChessModel:
         pass
 
     def is_valid_move(self, move):
-        pass
+        return True
 
     def move(self, move):
-        pass
+        self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
+        self.board[move.from_row][move.from_col] = None
+        self.set_next_player()
 
     def in_check(self, p):
         pass
@@ -115,4 +117,3 @@ class ChessModel:
 
     def undo(self):
         pass
-
