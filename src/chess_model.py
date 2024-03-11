@@ -45,7 +45,7 @@ class ChessModel:
         self.__nrows = 8
         self.__ncols = 8
         self.__message_code = None
-        self.set_piece(0,0,Rook(self.current_player))
+        self.set_piece(0, 0, Rook(self.current_player))
         self.set_piece(0, 1, Knight(self.current_player))
         self.set_piece(0, 2, Bishop(self.current_player))
         self.set_piece(0, 3, Queen(self.current_player))
@@ -53,7 +53,7 @@ class ChessModel:
         self.set_piece(0, 5, Bishop(self.current_player))
         self.set_piece(0, 6, Knight(self.current_player))
         self.set_piece(0, 7, Rook(self.current_player))
-        for i in range(0,8):
+        for i in range(0, 8):
             self.set_piece(1, i, Pawn(self.current_player))
         self.set_next_player()
         self.set_piece(7, 0, Rook(self.current_player))
@@ -64,7 +64,7 @@ class ChessModel:
         self.set_piece(7, 5, Bishop(self.current_player))
         self.set_piece(7, 6, Knight(self.current_player))
         self.set_piece(7, 7, Rook(self.current_player))
-        for i in range(0,8):
+        for i in range(0, 8):
             self.set_piece(6, i, Pawn(self.current_player))
 
     @property
