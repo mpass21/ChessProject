@@ -1,7 +1,4 @@
 from chess_piece import ChessPiece
-from move import Move
-from player import Player
-
 class King(ChessPiece):
     def __str__(self):
         return "King"
