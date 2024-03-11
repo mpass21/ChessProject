@@ -24,7 +24,7 @@ class ChessPiece(ABC):
             return False
         elif move.from_row > 8 or move.from_row < 0:
             return False
-        elif move.to_row > 8 or move.to_row < -1:
+        elif move.to_row > 8 or move.to_row < 0:
             return False
         elif move.to_col > 8 or move.to_col < 0:
             return False
