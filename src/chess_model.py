@@ -87,11 +87,12 @@ class ChessModel:
     def is_complete(self):
         pass
     def is_valid_move(self, move):
-        return True
+        pass
     def move(self, move):
-        self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
-        self.board[move.from_row][move.from_col] = None
-        self.set_next_player()
+        pass
+        #self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
+        #self.board[move.from_row][move.from_col] = None
+        #self.set_next_player()
     def in_check(self, p):
         pass
     def piece_at(self, row: int, col: int):
