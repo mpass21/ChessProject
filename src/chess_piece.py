@@ -20,23 +20,22 @@ class ChessPiece(ABC):
 
     @abstractmethod
     def is_valid_move(self, move, board):
-        valid = True
-        if move.from_col > 7 or move.from_col < -1:
-            valid = False
-        elif move.from_row > 7 or move.from_row < -1:
-            valid = False
-        elif move.to_row > 7 or move.to_row < -1:
-            valid = False
-        elif move.to_col > 7 or move.to_col < -1:
-            valid = False
+        if move.from_col > 8 or move.from_col < 0:
+            return False
+        elif move.from_row > 8 or move.from_row < 0:
+            return False
+        elif move.to_row > 8 or move.to_row < -1:
+            return False
+        elif move.to_col > 8 or move.to_col < 0:
+            return False
         if move.from_col == move.to_col and move.from_row == move.to_row:
-            valid = False
+            return False
         if board[move.from_row][move.from_col] != self:
-            valid = False
+            return False
         if board[move.to_row][move.to_col] is None:
             pass
         elif board[move.to_row][move.to_col].player == self.player:
-            valid = False
-        return valid
+            return False
+        return True
 
 
