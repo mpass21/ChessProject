@@ -92,7 +92,7 @@ class ChessModel:
     def move(self, move):
         piece = self.piece_at(move.from_row, move.from_col)
         if piece == Pawn and move.to_row == 0:
-            self.set_piece(move.to_row, move.to_col, Queen)
+            self.set_piece(move.to_row, move.to_col, Queen(self.current_player))
         else:
             self.set_piece(move.to_row, move.to_col, piece)
         self.board[move.from_row][move.from_col] = None
