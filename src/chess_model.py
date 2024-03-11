@@ -83,20 +83,21 @@ class ChessModel:
     def messageCode(self):
         return self.__message_code
 
-        
     def is_complete(self):
         pass
+
     def is_valid_move(self, move):
         pass
+
     def move(self, move):
         pass
-        #self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
-        #self.board[move.from_row][move.from_col] = None
-        #self.set_next_player()
+
     def in_check(self, p):
         pass
+
     def piece_at(self, row: int, col: int):
         return self.board[row][col]
+
     def set_next_player(self):
         self.__player = Player.next(self.__player)
 
@@ -111,5 +112,7 @@ class ChessModel:
                 raise ValueError
         else:
             raise ValueError
+
     def undo(self):
         pass
+
