@@ -170,34 +170,66 @@ class ChessModel:
                                 return True
                             if self.piece_at(i-j, b) is not None:
                                 break
+                if b + i < 8:
+                    if isinstance(self.piece_at(a + i, b+i), Bishop) or isinstance(self.piece_at(a + i, b+i), Queen):
+                        if self.piece_at(a + i, b+i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a+i) - j, (b+i) - j), King):
+                                    return True
+                                if self.piece_at((a+i) - j, (b+i) - j) is not None:
+                                    break
+                if b - i >= 0:
+                    if isinstance(self.piece_at(a + i, b-i), Bishop) or isinstance(self.piece_at(a + i, b-i), Queen):
+                        if self.piece_at(a + i, b-i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a+i) - j, (b-i) + j), King):
+                                    return True
+                                if self.piece_at((a+i) - j, (b-i) + j) is not None:
+                                    break
             if a - i >= 0:
                 if isinstance(self.piece_at(a - i, b), Rook) or isinstance(self.piece_at(a - i, b), Queen):
                     if self.piece_at(a - i, b).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(i+j, b), King):
+                            if isinstance(self.piece_at(a, i+j), King):
                                 return True
                             if self.piece_at(i-j, b) is not None:
                                 break
+                if b + i < 8:
+                    if isinstance(self.piece_at(a - i, b+i), Bishop) or isinstance(self.piece_at(a - i, b+i), Queen):
+                        if self.piece_at(a - i, b+i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a-i) + j, (b+i) - j), King):
+                                    return True
+                                if self.piece_at((a-i) + j, (b+i) - j) is not None:
+                                    break
+                if b - i >= 0:
+                    if isinstance(self.piece_at(a - i, b-i), Bishop) or isinstance(self.piece_at(a - i, b-i), Queen):
+                        if self.piece_at(a - i, b-i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a-i) + j, (b-i) + j), King):
+                                    return True
+                                if self.piece_at((a-i) + j, (b-i) + j) is not None:
+                                    break
             if b + i < 8:
                 if isinstance(self.piece_at(a, b+i), Rook) or isinstance(self.piece_at(a, b+i), Queen):
                     if self.piece_at(a, b+i).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(i-j, b), King):
+                            if isinstance(self.piece_at(a, i-j), King):
                                 return True
-                            if self.piece_at(i-j, b) is not None:
+                            if self.piece_at(a, i-j) is not None:
                                 break
             if b - i >= 0:
                 if isinstance(self.piece_at(a, b-i), Rook) or isinstance(self.piece_at(a, b-i), Queen):
                     if self.piece_at(a, b-i).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(i+j, b), King):
+                            if isinstance(self.piece_at(a, i+j), King):
                                 return True
-                            if self.piece_at(i-j, b) is not None:
+                            if self.piece_at(a, i+j) is not None:
                                 break
-
+        return False
 
     def piece_at(self, row: int, col: int):
-        if (0 <= row < 8 and 0 <= col < 8):
+        if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
 
     def set_next_player(self):
