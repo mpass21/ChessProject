@@ -84,7 +84,7 @@ class ChessModel:
         return self.__message_code
 
     def is_complete(self):
-        pass
+        if
 
     def is_valid_move(self, move):
         return True
@@ -169,8 +169,6 @@ class ChessModel:
                             if isinstance(self.piece_at((a+i)-j, b), King):
                                 return True
                             if self.piece_at((a+i)-j, b) is not None:
-                                break
-                            if self.in_check_helper((a+i)-j, b, p):
                                 break
                 if b + i < 8:
                     if isinstance(self.piece_at(a + i, b+i), Bishop) or isinstance(self.piece_at(a + i, b+i), Queen):
