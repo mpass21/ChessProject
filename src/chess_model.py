@@ -161,7 +161,39 @@ class ChessModel:
                 if isinstance(self.piece_at(a+1, b-1), Pawn):
                     if self.piece_at(a + 1, b - 1).player != p:
                         return True
-        return False
+        for i in range(1, 8):
+            if a + i < 8:
+                if isinstance(self.piece_at(a+i, b), Rook) or isinstance(self.piece_at(a+i, b), Queen):
+                    if self.piece_at(a + i, b).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at(i-j, b), King):
+                                return True
+                            if self.piece_at(i-j, b) is not None:
+                                break
+            if a - i >= 0:
+                if isinstance(self.piece_at(a - i, b), Rook) or isinstance(self.piece_at(a - i, b), Queen):
+                    if self.piece_at(a - i, b).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at(i+j, b), King):
+                                return True
+                            if self.piece_at(i-j, b) is not None:
+                                break
+            if b + i < 8:
+                if isinstance(self.piece_at(a, b+i), Rook) or isinstance(self.piece_at(a, b+i), Queen):
+                    if self.piece_at(a, b+i).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at(i-j, b), King):
+                                return True
+                            if self.piece_at(i-j, b) is not None:
+                                break
+            if b - i >= 0:
+                if isinstance(self.piece_at(a, b-i), Rook) or isinstance(self.piece_at(a, b-i), Queen):
+                    if self.piece_at(a, b-i).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at(i+j, b), King):
+                                return True
+                            if self.piece_at(i-j, b) is not None:
+                                break
 
 
     def piece_at(self, row: int, col: int):
