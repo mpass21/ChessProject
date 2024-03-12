@@ -166,9 +166,11 @@ class ChessModel:
                 if isinstance(self.piece_at(a+i, b), Rook) or isinstance(self.piece_at(a+i, b), Queen):
                     if self.piece_at(a + i, b).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(i-j, b), King):
+                            if isinstance(self.piece_at((a+i)-j, b), King):
                                 return True
-                            if self.piece_at(i-j, b) is not None:
+                            if self.piece_at((a+i)-j, b) is not None:
+                                break
+                            if self.in_check_helper((a+i)-j, b, p):
                                 break
                 if b + i < 8:
                     if isinstance(self.piece_at(a + i, b+i), Bishop) or isinstance(self.piece_at(a + i, b+i), Queen):
@@ -190,9 +192,9 @@ class ChessModel:
                 if isinstance(self.piece_at(a - i, b), Rook) or isinstance(self.piece_at(a - i, b), Queen):
                     if self.piece_at(a - i, b).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, i+j), King):
+                            if isinstance(self.piece_at((a-i)+j, b), King):
                                 return True
-                            if self.piece_at(i-j, b) is not None:
+                            if self.piece_at((a-i)+j, b) is not None:
                                 break
                 if b + i < 8:
                     if isinstance(self.piece_at(a - i, b+i), Bishop) or isinstance(self.piece_at(a - i, b+i), Queen):
@@ -214,17 +216,17 @@ class ChessModel:
                 if isinstance(self.piece_at(a, b+i), Rook) or isinstance(self.piece_at(a, b+i), Queen):
                     if self.piece_at(a, b+i).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, i-j), King):
+                            if isinstance(self.piece_at(a, (b+i)-j), King):
                                 return True
-                            if self.piece_at(a, i-j) is not None:
+                            if self.piece_at(a, (b+i)-j) is not None:
                                 break
             if b - i >= 0:
                 if isinstance(self.piece_at(a, b-i), Rook) or isinstance(self.piece_at(a, b-i), Queen):
                     if self.piece_at(a, b-i).player != p:
                         for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, i+j), King):
+                            if isinstance(self.piece_at(a, (b-i)+j), King):
                                 return True
-                            if self.piece_at(a, i+j) is not None:
+                            if self.piece_at(a, (b-i)+j) is not None:
                                 break
         return False
 
