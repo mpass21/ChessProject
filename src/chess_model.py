@@ -142,26 +142,25 @@ class ChessModel:
                 if isinstance(self.piece_at(a-1, b-2), Knight):
                     if self.piece_at(a - 1, b - 2).player != p:
                         return True
-        if p == Player.BLACK:
-            if a - 1 >= 0:
-                if b + 1 < 8:
-                    if isinstance(self.piece_at(a-1, b+1), Pawn):
-                        if self.piece_at(a - 1, b + 1).player != p:
-                            return True
-                if b - 1 >= 0:
-                    if isinstance(self.piece_at(a-1, b-1), Pawn):
-                        if self.piece_at(a - 1, b - 1).player != p:
-                            return True
-        elif p == Player.WHITE:
-            if a + 1 < 0:
-                if b + 1 < 8:
-                    if isinstance(self.piece_at(a+1, b+1), Pawn):
-                        if self.piece_at(a + 1, b + 1).player != p:
-                            return True
-                if b - 1 >= 0:
-                    if isinstance(self.piece_at(a+1, b-1), Pawn):
-                        if self.piece_at(a + 1, b - 1).player != p:
-                            return True
+
+        if a - 1 >= 0:
+            if b + 1 < 8:
+                if isinstance(self.piece_at(a-1, b+1), Pawn):
+                    if self.piece_at(a - 1, b + 1).player != p:
+                        return True
+            if b - 1 >= 0:
+                if isinstance(self.piece_at(a-1, b-1), Pawn):
+                    if self.piece_at(a - 1, b - 1).player != p:
+                        return True
+        if a + 1 < 8:
+            if b + 1 < 8:
+                if isinstance(self.piece_at(a+1, b+1), Pawn):
+                    if self.piece_at(a + 1, b + 1).player != p:
+                        return True
+            if b - 1 >= 0:
+                if isinstance(self.piece_at(a+1, b-1), Pawn):
+                    if self.piece_at(a + 1, b - 1).player != p:
+                        return True
         return False
 
 
