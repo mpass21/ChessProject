@@ -44,7 +44,7 @@ class ChessModel:
         self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
-        self.__message_code = None
+        self.__message_code = MoveValidity
         self.set_piece(0, 0, Rook(self.current_player))
         self.set_piece(0, 1, Knight(self.current_player))
         self.set_piece(0, 2, Bishop(self.current_player))
@@ -108,60 +108,73 @@ class ChessModel:
                     break
         if (a + 2) < 8:
             if b + 1 < 8:
-                if isinstance(self.piece_at(a+2, b+1), Knight) and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+2, b+1), Knight):
+                    if self.piece_at(a + 2, b + 1).player != p:
+                        return True
             if b - 1 >= 0:
-                if isinstance(self.piece_at(a+2, b-1), Knight) and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+2, b-1), Knight):
+                    if self.piece_at(a + 2, b - 1).player != p:
+                        return True
         if (a - 2) >= 0:
             if b + 1 < 8:
-                if isinstance(self.piece_at(a-2, b+1), Knight) and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a-2, b+1), Knight):
+                    if self.piece_at(a - 2, b + 1).player != p:
+                        return True
             if b - 1 >= 0:
-                if isinstance(self.piece_at(a+2, b-1), Knight) and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+2, b-1), Knight):
+                    if self.piece_at(a + 2, b - 1).player != p:
+                        return True
         if (b + 2) < 8:
             if a + 1 < 8:
-                if isinstance(self.piece_at(a+2, b+1), Knight) and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+1, b+2), Knight):
+                    if self.piece_at(a + 1, b + 2).player != p:
+                        return True
             if a - 1 >= 0:
-                if isinstance(self.piece_at(a-1, b+2), Knight) and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a-1, b+2), Knight):
+                    if self.piece_at(a - 1, b + 2).player != p:
+                        return True
         if (b - 2) >= 0:
             if a + 1 < 8:
-                if isinstance(self.piece_at(a+1, b-2), Knight) and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+1, b-2), Knight):
+                    if self.piece_at(a + 1, b - 2).player != p:
+                        return True
             if a - 1 >= 0:
-                if isinstance(self.piece_at(a-1, b-2), Knight) and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a-1, b-2), Knight):
+                    if self.piece_at(a - 1, b - 2).player != p:
+                        return True
         if p == Player.BLACK:
             if a - 1 >= 0:
                 if b + 1 < 8:
                     if isinstance(self.piece_at(a-1, b+1), Pawn):
-                        return True
+                        if self.piece_at(a - 1, b + 1).player != p:
+                            return True
                 if b - 1 >= 0:
                     if isinstance(self.piece_at(a-1, b-1), Pawn):
-                        return True
-        else:
-            if a + 1 >= 0:
+                        if self.piece_at(a - 1, b - 1).player != p:
+                            return True
+        elif p == Player.WHITE:
+            if a + 1 < 0:
                 if b + 1 < 8:
                     if isinstance(self.piece_at(a+1, b+1), Pawn):
-                        return True
+                        if self.piece_at(a + 1, b + 1).player != p:
+                            return True
                 if b - 1 >= 0:
                     if isinstance(self.piece_at(a+1, b-1), Pawn):
-                        return True
+                        if self.piece_at(a + 1, b - 1).player != p:
+                            return True
         return False
 
 
     def piece_at(self, row: int, col: int):
-        return self.board[row][col]
+        if (0 <= row < 8 and 0 <= col < 8):
+            return self.board[row][col]
 
     def set_next_player(self):
         self.__player = Player.next(self.__player)
 
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        if 0 <= row <= self.__nrows:
-            if 0 <= col <= self.__ncols:
+        if 0 <= row < self.__nrows:
+            if 0 <= col < self.__ncols:
                 if piece is None or ChessPiece:
                     self.board[row][col] = piece
                 else:
