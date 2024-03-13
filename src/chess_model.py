@@ -9,6 +9,7 @@ from bishop import Bishop
 from queen import Queen
 from king import King
 from move import Move
+import copy
 
 class MoveValidity(Enum):
     Valid = 1
@@ -33,6 +34,7 @@ class UndoException(Exception):
 
 class ChessModel:
     def __init__(self):
+  
         self.board = [[None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
@@ -41,6 +43,7 @@ class ChessModel:
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None]]
+        self.moveList = []
         self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
@@ -66,6 +69,7 @@ class ChessModel:
         self.set_piece(7, 7, Rook(self.current_player))
         for i in range(0, 8):
             self.set_piece(6, i, Pawn(self.current_player))
+        self.updateMoveList(self.board)
 
     @property
     def nrows(self):
@@ -87,7 +91,26 @@ class ChessModel:
         pass
 
     def is_valid_move(self, move):
-        pass
+        start_row, start_col = move.from_row, move.from_col
+        piece = self.board[start_row][start_col]
+        if not piece:
+            return False
+        x =piece.is_valid_move(move, self.board)
+        self.move(move)
+        if self.current_player == Player.WHITE:
+            if self.in_check(Player.BLACK):
+                x = False
+        else:
+            if self.in_check(Player.WHITE):
+                x = False
+        self.undo()
+        return x
+
+         
+            
+    def updateMoveList(self,board):
+        copied_board = copy.deepcopy(board)
+        self.moveList.append(copied_board)
 
     def move(self, move):
         if str(self.piece_at(move.from_row, move.from_col)) == 'Pawn' and (move.to_row == 0 or move.to_row == 7):
@@ -95,58 +118,153 @@ class ChessModel:
         else:
             self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
         self.board[move.from_row][move.from_col] = None
+        self.updateMoveList(self.board)
         self.set_next_player()
 
     def in_check(self, p):
-        pass
-        """a = 0
+        a = 0
         b = 0
         for i in range(0, 8):
             for j in range(0, 8):
-                if str(self.piece_at(i, j)) == 'King' and self.piece_at(i, j).player == p:
+                if isinstance(self.piece_at(i, j), King) and self.piece_at(i, j).player == p:
                     a = i
                     b = j
                     break
         if (a + 2) < 8:
             if b + 1 < 8:
-                if str(self.piece_at(a+2, b+1)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+2, b+1), Knight):
+                    if self.piece_at(a + 2, b + 1).player != p:
+                        return True
             if b - 1 >= 0:
-                if str(self.piece_at(a + 2, b - 1)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+2, b-1), Knight):
+                    if self.piece_at(a + 2, b - 1).player != p:
+                        return True
         if (a - 2) >= 0:
             if b + 1 < 8:
-                if str(self.piece_at(a-2, b+1)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a-2, b+1), Knight):
+                    if self.piece_at(a - 2, b + 1).player != p:
+                        return True
             if b - 1 >= 0:
-                if str(self.piece_at(a - 2, b - 1)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+2, b-1), Knight):
+                    if self.piece_at(a + 2, b - 1).player != p:
+                        return True
         if (b + 2) < 8:
             if a + 1 < 8:
-                if str(self.piece_at(a+1, b+2)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+1, b+2), Knight):
+                    if self.piece_at(a + 1, b + 2).player != p:
+                        return True
             if a - 1 >= 0:
-                if str(self.piece_at(a - 1, b + 2)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
-                    return True
+                if isinstance(self.piece_at(a-1, b+2), Knight):
+                    if self.piece_at(a - 1, b + 2).player != p:
+                        return True
         if (b - 2) >= 0:
             if a + 1 < 8:
-                if str(self.piece_at(a+1, b-2)) == 'Knight' and self.piece_at(a+2, b+1).player != p:
-                    return True
+                if isinstance(self.piece_at(a+1, b-2), Knight):
+                    if self.piece_at(a + 1, b - 2).player != p:
+                        return True
             if a - 1 >= 0:
-                if str(self.piece_at(a - 1, b - 2)) == 'Knight' and self.piece_at(a + 2, b - 1).player != p:
-                    return True
-        for num in range(1, 8):"""
+                if isinstance(self.piece_at(a-1, b-2), Knight):
+                    if self.piece_at(a - 1, b - 2).player != p:
+                        return True
 
+        if a - 1 >= 0:
+            if b + 1 < 8:
+                if isinstance(self.piece_at(a-1, b+1), Pawn):
+                    if self.piece_at(a - 1, b + 1).player != p:
+                        return True
+            if b - 1 >= 0:
+                if isinstance(self.piece_at(a-1, b-1), Pawn):
+                    if self.piece_at(a - 1, b - 1).player != p:
+                        return True
+        if a + 1 < 8:
+            if b + 1 < 8:
+                if isinstance(self.piece_at(a+1, b+1), Pawn):
+                    if self.piece_at(a + 1, b + 1).player != p:
+                        return True
+            if b - 1 >= 0:
+                if isinstance(self.piece_at(a+1, b-1), Pawn):
+                    if self.piece_at(a + 1, b - 1).player != p:
+                        return True
+                    
 
+        for i in range(1, 8):
+            if a + i < 8:
+                if isinstance(self.piece_at(a+i, b), Rook) or isinstance(self.piece_at(a+i, b), Queen):
+                    if self.piece_at(a + i, b).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at((a+i)-j, b), King):
+                                return True
+                            if self.piece_at((a+i)-j, b) is not None:
+                                break
+                if b + i < 8:
+                    if isinstance(self.piece_at(a + i, b+i), Bishop) or isinstance(self.piece_at(a + i, b+i), Queen):
+                        if self.piece_at(a + i, b+i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a+i) - j, (b+i) - j), King):
+                                    return True
+                                if self.piece_at((a+i) - j, (b+i) - j) is not None:
+                                    break
+                if b - i >= 0:
+                    if isinstance(self.piece_at(a + i, b-i), Bishop) or isinstance(self.piece_at(a + i, b-i), Queen):
+                        if self.piece_at(a + i, b-i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a+i) - j, (b-i) + j), King):
+                                    return True
+                                if self.piece_at((a+i) - j, (b-i) + j) is not None:
+                                    break
+            if a - i >= 0:
+                if isinstance(self.piece_at(a - i, b), Rook) or isinstance(self.piece_at(a - i, b), Queen):
+                    if self.piece_at(a - i, b).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at((a-i)+j, b), King):
+                                return True
+                            if self.piece_at((a-i)+j, b) is not None:
+                                break
+                if b + i < 8:
+                    if isinstance(self.piece_at(a - i, b+i), Bishop) or isinstance(self.piece_at(a - i, b+i), Queen):
+                        if self.piece_at(a - i, b+i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a-i) + j, (b+i) - j), King):
+                                    return True
+                                if self.piece_at((a-i) + j, (b+i) - j) is not None:
+                                    break
+                if b - i >= 0:
+                    if isinstance(self.piece_at(a - i, b-i), Bishop) or isinstance(self.piece_at(a - i, b-i), Queen):
+                        if self.piece_at(a - i, b-i).player != p:
+                            for j in range(1, i + 1):
+                                if isinstance(self.piece_at((a-i) + j, (b-i) + j), King):
+                                    return True
+                                if self.piece_at((a-i) + j, (b-i) + j) is not None:
+                                    break
+            if b + i < 8:
+                if isinstance(self.piece_at(a, b+i), Rook) or isinstance(self.piece_at(a, b+i), Queen):
+                    if self.piece_at(a, b+i).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at(a, (b+i)-j), King):
+                                return True
+                            if self.piece_at(a, (b+i)-j) is not None:
+                                break
+            if b - i >= 0:
+                if isinstance(self.piece_at(a, b-i), Rook) or isinstance(self.piece_at(a, b-i), Queen):
+                    if self.piece_at(a, b-i).player != p:
+                        for j in range(1, i+1):
+                            if isinstance(self.piece_at(a, (b-i)+j), King):
+                                return True
+                            if self.piece_at(a, (b-i)+j) is not None:
+                                break
+        return False
+
+                
     def piece_at(self, row: int, col: int):
-        return self.board[row][col]
+        if 0 <= row < 8 and 0 <= col < 8:
+            return self.board[row][col]
 
     def set_next_player(self):
         self.__player = Player.next(self.__player)
 
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        if 0 <= row <= self.__nrows:
-            if 0 <= col <= self.__ncols:
+        if 0 <= row < self.__nrows:
+            if 0 <= col < self.__ncols:
                 if piece is None or ChessPiece:
                     self.board[row][col] = piece
                 else:
@@ -155,11 +273,24 @@ class ChessModel:
                 raise ValueError
         else:
             raise ValueError
-
+    def printBoard(self,board):
+        for row in board:
+            for col in row:
+                if col:
+                    print(["P"],end="")
+                else:
+                    print(["."], end="")
+            print("")
+        print("")
+ 
     def undo(self):
-        pass
 
+        if len(self.moveList) >= 1:
+            self.moveList.pop()  
+            self.board = copy.deepcopy(self.moveList[-1])
+            self.set_next_player()
+        else:
+            raise UndoException("No moves left to undo")
 
-
-
+    
     
