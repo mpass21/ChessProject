@@ -90,6 +90,7 @@ class ChessModel:
         if self.in_check(self.current_player):
             a = 0
             b = 0
+            piece_lst = [Queen,Rook,Bishop,Knight,Pawn]
             for i in range(0, 8):
                 for j in range(0, 8):
                     if isinstance(self.piece_at(i, j), King):
@@ -108,12 +109,46 @@ class ChessModel:
             move_lst = [move_u,move_d,move_l,move_r,move_u_r,move_u_l,move_d_l,move_d_r]
             for move in move_lst:
                 if self.piece_at(a, b).is_valid_move(move, self.board):
-                    return False
+                    if self.test_board(self.current_player, move):
+                        return False
+            for i in range(0, 8):
+                for j in range(0, 8):
+                    for piece in piece_lst:
+                        if isinstance(self.piece_at(i, j), piece):
+                            if self.piece_at(i, j).player == self.current_player:
+                                for x in range(0, 8):
+                                    for y in range(0, 8):
+                                        move = Move(i,j,x,y)
+                                        if self.piece_at(i, j).is_valid_move(move, self.board):
+                                            if self.test_board(self.current_player, move):
+                                                return False
+            return True
         else:
             return False
 
+    def test_board(self, p, move):
+        self.move(move)
+        if self.in_check(p):
+            self.undo()
+            return False
+        self.undo()
+        return True
+
     def is_valid_move(self, move):
-        pass
+        start_row, start_col = move.from_row, move.from_col
+        piece = self.board[start_row][start_col]
+        if not piece:
+            return False
+        x = piece.is_valid_move(move, self.board)
+        self.move(move)
+        if self.current_player == Player.WHITE:
+            if self.in_check(Player.BLACK):
+                x = False
+        else:
+            if self.in_check(Player.WHITE):
+                x = False
+        self.undo()
+        return x
 
     def updateMoveList(self, board):
         copied_board = copy.deepcopy(board)
@@ -125,6 +160,7 @@ class ChessModel:
         else:
             self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
         self.board[move.from_row][move.from_col] = None
+        self.updateMoveList(self.board)
         self.set_next_player()
 
     def in_check(self, p):
@@ -279,4 +315,7 @@ class ChessModel:
             raise ValueError
 
     def undo(self):
-        pass
+        if len(self.moveList) >= 1:
+            self.moveList.pop()
+            self.board = copy.deepcopy(self.moveList[-1])
+            self.set_next_player()
