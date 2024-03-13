@@ -29,7 +29,8 @@ class MoveValidity(Enum):
 
 
 class UndoException(Exception):
-    pass
+    def __str__(self):
+        return 'there are no more undoes'
 
 
 class ChessModel:
@@ -109,8 +110,14 @@ class ChessModel:
             move_lst = [move_u,move_d,move_l,move_r,move_u_r,move_u_l,move_d_l,move_d_r]
             for move in move_lst:
                 if self.piece_at(a, b).is_valid_move(move, self.board):
-                    if self.test_board(self.current_player, move):
+                    self.move(move)
+                    self.set_next_player()
+                    if not self.in_check(self.current_player):
+                        self.undo()
+                        self.set_next_player()
                         return False
+                    self.undo()
+                    self.set_next_player()
             for i in range(0, 8):
                 for j in range(0, 8):
                     for piece in piece_lst:
@@ -120,34 +127,38 @@ class ChessModel:
                                     for y in range(0, 8):
                                         move = Move(i,j,x,y)
                                         if self.piece_at(i, j).is_valid_move(move, self.board):
-                                            if self.test_board(self.current_player, move):
+                                            self.move(move)
+                                            self.set_next_player()
+                                            if not self.in_check(self.current_player):
+                                                print(2)
+                                                self.undo()
+                                                self.set_next_player()
                                                 return False
+                                            print(1)
+                                            self.undo()
+                                            self.set_next_player()
             return True
         else:
             return False
 
-    def test_board(self, p, move):
-        self.move(move)
-        if self.in_check(p):
-            self.undo()
-            return False
-        self.undo()
-        return True
-
     def is_valid_move(self, move):
+        self.__message_code = MoveValidity.Valid
         start_row, start_col = move.from_row, move.from_col
         piece = self.board[start_row][start_col]
         if not piece:
+            self.__message_code = MoveValidity.Invalid
             return False
+        if self.in_check(self.current_player):
+            self.__message_code = MoveValidity.StayingInCheck
         x = piece.is_valid_move(move, self.board)
         self.move(move)
-        if self.current_player == Player.WHITE:
-            if self.in_check(Player.BLACK):
-                x = False
-        else:
-            if self.in_check(Player.WHITE):
-                x = False
+        self.set_next_player()
+        if self.in_check(self.current_player):
+            if self.__message_code != MoveValidity.StayingInCheck:
+                self.__message_code = MoveValidity.MovingIntoCheck
+            x = False
         self.undo()
+        self.set_next_player()
         return x
 
     def updateMoveList(self, board):
@@ -303,19 +314,16 @@ class ChessModel:
         self.__player = Player.next(self.__player)
 
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        if 0 <= row < self.__nrows:
-            if 0 <= col < self.__ncols:
-                if piece is None or ChessPiece:
-                    self.board[row][col] = piece
-                else:
-                    raise TypeError
-            else:
-                raise ValueError
-        else:
-            raise ValueError
+        self.board[row][col] = piece
 
     def undo(self):
-        if len(self.moveList) >= 1:
+        if len(self.moveList) > 1:
             self.moveList.pop()
             self.board = copy.deepcopy(self.moveList[-1])
             self.set_next_player()
+        else:
+            raise UndoException
+
+    @messageCode.setter
+    def messageCode(self, value):
+        self._messageCode = value
