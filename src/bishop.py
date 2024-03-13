@@ -14,7 +14,7 @@ class Bishop(ChessPiece):
             pass
         else:
             return False
-        if not (abs(move.to_row - move.from_row) > 0 and abs(move.to_col - move.from_col) > 0):
+        if not (abs(move.to_row - move.from_row) == abs(move.to_col - move.from_col)):
             return False
         if move.to_row - move.from_row > 0:
             if move.to_col - move.from_col > 0:
