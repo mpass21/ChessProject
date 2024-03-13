@@ -9,6 +9,7 @@ from bishop import Bishop
 from queen import Queen
 from king import King
 from move import Move
+import copy
 
 class MoveValidity(Enum):
     Valid = 1
@@ -41,6 +42,7 @@ class ChessModel:
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None]]
+        self.moveList = []
         self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
@@ -66,6 +68,7 @@ class ChessModel:
         self.set_piece(7, 7, Rook(self.current_player))
         for i in range(0, 8):
             self.set_piece(6, i, Pawn(self.current_player))
+        self.updateMoveList(self.board)
 
     @property
     def nrows(self):
@@ -84,10 +87,37 @@ class ChessModel:
         return self.__message_code
 
     def is_complete(self):
-        if
+        if self.in_check(self.current_player):
+            a = 0
+            b = 0
+            for i in range(0, 8):
+                for j in range(0, 8):
+                    if isinstance(self.piece_at(i, j), King):
+                        if self.piece_at(i, j).player == self.current_player:
+                            a = i
+                            b = j
+                            break
+            move_u = Move(a, b, a+1, b)
+            move_d = Move(a, b, a-1, b)
+            move_l = Move(a, b, a, b-1)
+            move_r = Move(a, b, a, b+1)
+            move_u_r = Move(a, b, a-1, b+1)
+            move_u_l = Move(a, b, a-1, b-1)
+            move_d_r = Move(a, b, a+1, b+1)
+            move_d_l = Move(a, b, a+1, b-1)
+            move_lst = [move_u,move_d,move_l,move_r,move_u_r,move_u_l,move_d_l,move_d_r]
+            for move in move_lst:
+                if self.piece_at(a, b).is_valid_move(move, self.board):
+                    return False
+        else:
+            return False
 
     def is_valid_move(self, move):
-        return True
+        pass
+
+    def updateMoveList(self, board):
+        copied_board = copy.deepcopy(board)
+        self.moveList.append(copied_board)
 
     def move(self, move):
         if isinstance(self.piece_at(move.from_row, move.from_col), Pawn) and (move.to_row == 0 or move.to_row == 7):
@@ -102,10 +132,11 @@ class ChessModel:
         b = 0
         for i in range(0, 8):
             for j in range(0, 8):
-                if isinstance(self.piece_at(i, j), King) and self.piece_at(i, j).player == p:
-                    a = i
-                    b = j
-                    break
+                if isinstance(self.piece_at(i, j), King):
+                    if self.piece_at(i, j).player == p:
+                        a = i
+                        b = j
+                        break
         if (a + 2) < 8:
             if b + 1 < 8:
                 if isinstance(self.piece_at(a+2, b+1), Knight):
