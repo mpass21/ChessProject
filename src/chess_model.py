@@ -8,7 +8,6 @@ from knight import Knight
 from bishop import Bishop
 from queen import Queen
 from king import King
-from move import Move
 import copy
 
 class MoveValidity(Enum):
@@ -30,7 +29,7 @@ class MoveValidity(Enum):
 
 class UndoException(Exception):
     def __str__(self):
-        return 'there are no more undoes'
+        return 'No moves left to undo'
 
 
 class ChessModel:
@@ -130,11 +129,9 @@ class ChessModel:
                                             self.move(move)
                                             self.set_next_player()
                                             if not self.in_check(self.current_player):
-                                                print(2)
                                                 self.undo()
                                                 self.set_next_player()
                                                 return False
-                                            print(1)
                                             self.undo()
                                             self.set_next_player()
             return True
@@ -142,27 +139,27 @@ class ChessModel:
             return False
 
     def is_valid_move(self, move):
-        self.__message_code = MoveValidity.Valid
         start_row, start_col = move.from_row, move.from_col
         piece = self.board[start_row][start_col]
         if not piece:
-            self.__message_code = MoveValidity.Invalid
             return False
-        if self.in_check(self.current_player):
-            self.__message_code = MoveValidity.StayingInCheck
         x = piece.is_valid_move(move, self.board)
         self.move(move)
         self.set_next_player()
         if self.in_check(self.current_player):
-            if self.__message_code != MoveValidity.StayingInCheck:
-                self.__message_code = MoveValidity.MovingIntoCheck
             x = False
         self.undo()
         self.set_next_player()
         return x
 
+    def copy_board(self, board):
+        newBoard = []
+        for row in board:
+            newBoard.append(copy.copy(row))
+        return newBoard
+
     def updateMoveList(self, board):
-        copied_board = copy.deepcopy(board)
+        copied_board = self.copy_board(board)
         self.moveList.append(copied_board)
 
     def move(self, move):
@@ -319,11 +316,7 @@ class ChessModel:
     def undo(self):
         if len(self.moveList) > 1:
             self.moveList.pop()
-            self.board = copy.deepcopy(self.moveList[-1])
+            self.board = self.copy_board(self.moveList[-1])
             self.set_next_player()
         else:
-            raise UndoException
-
-    @messageCode.setter
-    def messageCode(self, value):
-        self._messageCode = value
+            raise UndoException("No moves left to undo")
