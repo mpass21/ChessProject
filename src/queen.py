@@ -4,6 +4,8 @@ from move import Move
 from player import Player
 
 class Queen(ChessPiece):
+    def __init__(self, player: Player):
+        super().__init__(player)
 
     def __str__(self):
         return "Queen"

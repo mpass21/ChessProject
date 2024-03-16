@@ -4,6 +4,8 @@ from player import Player
 
 
 class Knight(ChessPiece):
+    def __init__(self, player: Player):
+        super().__init__(player)
 
     def __str__(self):
         return "Knight"

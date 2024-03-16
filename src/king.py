@@ -1,5 +1,8 @@
 from chess_piece import ChessPiece
+from player import Player
 class King(ChessPiece):
+    def __init__(self, player: Player):
+        super().__init__(player)
     def __str__(self):
         return "King"
 
