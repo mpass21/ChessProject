@@ -87,6 +87,8 @@ class ChessModel:
         return self.__message_code
 
     def is_complete(self):
+        if len(self.moveList) == 1:
+            self.updateMoveList(self.board)
         if self.in_check(self.current_player):
             a = 0
             b = 0
@@ -180,7 +182,6 @@ class ChessModel:
                     if self.piece_at(i, j).player == p:
                         a = i
                         b = j
-                        break
         if (a + 2) < 8:
             if b + 1 < 8:
                 if isinstance(self.piece_at(a+2, b+1), Knight):
@@ -238,69 +239,93 @@ class ChessModel:
                         return True
         for i in range(1, 8):
             if a + i < 8:
-                if isinstance(self.piece_at(a+i, b), Rook) or isinstance(self.piece_at(a+i, b), Queen):
+                if isinstance(self.piece_at(a+i, b), Rook):
                     if self.piece_at(a + i, b).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at((a+i)-j, b), King):
-                                return True
-                            if self.piece_at((a+i)-j, b) is not None:
-                                break
+                        move = Move(a+i, b, a, b)
+                        if Rook.is_valid_move(self.piece_at(a+i, b), move, self.board):
+                            return True
+                elif isinstance(self.piece_at(a+i, b), Queen):
+                    if self.piece_at(a + i, b).player != p:
+                        move = Move(a+i, b, a, b)
+                        if Queen.is_valid_move(self.piece_at(a+i, b), move, self.board):
+                            return True
                 if b + i < 8:
-                    if isinstance(self.piece_at(a + i, b+i), Bishop) or isinstance(self.piece_at(a + i, b+i), Queen):
+                    if isinstance(self.piece_at(a + i, b+i), Bishop):
                         if self.piece_at(a + i, b+i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a+i) - j, (b+i) - j), King):
-                                    return True
-                                if self.piece_at((a+i) - j, (b+i) - j) is not None:
-                                    break
+                            move = Move(a + i, b+i, a, b)
+                            if Bishop.is_valid_move(self.piece_at(a + i, b+i), move, self.board):
+                                return True
+                    elif isinstance(self.piece_at(a + i, b+i), Queen):
+                        if self.piece_at(a + i, b+i).player != p:
+                            move = Move(a + i, b+i, a, b)
+                            if Queen.is_valid_move(self.piece_at(a + i, b+i), move, self.board):
+                                return True
                 if b - i >= 0:
-                    if isinstance(self.piece_at(a + i, b-i), Bishop) or isinstance(self.piece_at(a + i, b-i), Queen):
+                    if isinstance(self.piece_at(a + i, b-i), Bishop):
                         if self.piece_at(a + i, b-i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a+i) - j, (b-i) + j), King):
-                                    return True
-                                if self.piece_at((a+i) - j, (b-i) + j) is not None:
-                                    break
+                            move = Move(a + i, b-i, a, b)
+                            if Bishop.is_valid_move(self.piece_at(a + i, b-i), move, self.board):
+                                return True
+                    elif isinstance(self.piece_at(a + i, b-i), Queen):
+                        if self.piece_at(a + i, b-i).player != p:
+                            move = Move(a + i, b-i, a, b)
+                            if Queen.is_valid_move(self.piece_at(a + i, b-i), move, self.board):
+                                return True
             if a - i >= 0:
-                if isinstance(self.piece_at(a - i, b), Rook) or isinstance(self.piece_at(a - i, b), Queen):
+                if isinstance(self.piece_at(a-i, b), Rook):
                     if self.piece_at(a - i, b).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at((a-i)+j, b), King):
-                                return True
-                            if self.piece_at((a-i)+j, b) is not None:
-                                break
+                        move = Move(a-i, b, a, b)
+                        if Rook.is_valid_move(self.piece_at(a-i, b), move, self.board):
+                            return True
+                elif isinstance(self.piece_at(a-i, b), Queen):
+                    if self.piece_at(a - i, b).player != p:
+                        move = Move(a-i, b, a, b)
+                        if Queen.is_valid_move(self.piece_at(a-i, b), move, self.board):
+                            return True
                 if b + i < 8:
-                    if isinstance(self.piece_at(a - i, b+i), Bishop) or isinstance(self.piece_at(a - i, b+i), Queen):
-                        if self.piece_at(a - i, b+i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a-i) + j, (b+i) - j), King):
-                                    return True
-                                if self.piece_at((a-i) + j, (b+i) - j) is not None:
-                                    break
+                    if isinstance(self.piece_at(a - i, b + i), Bishop):
+                        if self.piece_at(a - i, b + i).player != p:
+                            move = Move(a - i, b + i, a, b)
+                            if Bishop.is_valid_move(self.piece_at(a - i, b + i), move, self.board):
+                                return True
+                    elif isinstance(self.piece_at(a - i, b + i), Queen):
+                        if self.piece_at(a - i, b + i).player != p:
+                            move = Move(a - i, b + i, a, b)
+                            if Queen.is_valid_move(self.piece_at(a - i, b + i), move, self.board):
+                                return True
                 if b - i >= 0:
-                    if isinstance(self.piece_at(a - i, b-i), Bishop) or isinstance(self.piece_at(a - i, b-i), Queen):
-                        if self.piece_at(a - i, b-i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a-i) + j, (b-i) + j), King):
-                                    return True
-                                if self.piece_at((a-i) + j, (b-i) + j) is not None:
-                                    break
+                    if isinstance(self.piece_at(a - i, b - i), Bishop):
+                        if self.piece_at(a - i, b - i).player != p:
+                            move = Move(a - i, b - i, a, b)
+                            if Bishop.is_valid_move(self.piece_at(a - i, b - i), move, self.board):
+                                return True
+                    elif isinstance(self.piece_at(a - i, b - i), Queen):
+                        if self.piece_at(a - i, b - i).player != p:
+                            move = Move(a - i, b - i, a, b)
+                            if Queen.is_valid_move(self.piece_at(a - i, b - i), move, self.board):
+                                return True
             if b + i < 8:
-                if isinstance(self.piece_at(a, b+i), Rook) or isinstance(self.piece_at(a, b+i), Queen):
-                    if self.piece_at(a, b+i).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, (b+i)-j), King):
-                                return True
-                            if self.piece_at(a, (b+i)-j) is not None:
-                                break
+                if isinstance(self.piece_at(a, b + i), Rook):
+                    if self.piece_at(a, b + i).player != p:
+                        move = Move(a, b + i, a, b)
+                        if Rook.is_valid_move(self.piece_at(a, b + i), move, self.board):
+                            return True
+                elif isinstance(self.piece_at(a, b + i), Queen):
+                    if self.piece_at(a, b + i).player != p:
+                        move = Move(a, b + i, a, b)
+                        if Queen.is_valid_move(self.piece_at(a, b + i), move, self.board):
+                            return True
             if b - i >= 0:
-                if isinstance(self.piece_at(a, b-i), Rook) or isinstance(self.piece_at(a, b-i), Queen):
-                    if self.piece_at(a, b-i).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, (b-i)+j), King):
-                                return True
-                            if self.piece_at(a, (b-i)+j) is not None:
-                                break
+                if isinstance(self.piece_at(a, b - i), Rook):
+                    if self.piece_at(a, b - i).player != p:
+                        move = Move(a, b - i, a, b)
+                        if Rook.is_valid_move(self.piece_at(a, b-i), move, self.board):
+                            return True
+                elif isinstance(self.piece_at(a, b - i), Queen):
+                    if self.piece_at(a, b - i).player != p:
+                        move = Move(a, b - i, a, b)
+                        if Queen.is_valid_move(self.piece_at(a, b - i), move, self.board):
+                            return True
         return False
 
     def piece_at(self, row: int, col: int):
