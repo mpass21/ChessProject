@@ -38,7 +38,16 @@ class chess_model_test(unittest.TestCase):
         pass
 
     def test_is_complete(self):
-        pass
+        com_model = ChessModel()
+        move = Move(6,5, 5,5)
+        com_model.move(move)
+        move = Move(1, 4, 2,4)
+        com_model.move(move)
+        move = Move(6, 6, 4, 6)
+        com_model.move(move)
+        move = Move(0, 3, 4, 7)
+        com_model.move(move)
+        self.assertTrue(com_model.is_complete(), True)
 
     def test_move(self):
         pass
