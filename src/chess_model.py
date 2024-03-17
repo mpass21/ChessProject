@@ -87,8 +87,7 @@ class ChessModel:
         return self.__message_code
 
     def is_complete(self):
-        if len(self.moveList) == 1:
-            self.updateMoveList(self.board)
+        self.updateMoveList(self.board)
         if self.in_check(self.current_player):
             a = 0
             b = 0
@@ -100,8 +99,8 @@ class ChessModel:
                             a = i
                             b = j
                             break
-            move_u = Move(a, b, a+1, b)
-            move_d = Move(a, b, a-1, b)
+            move_d = Move(a, b, a+1, b)
+            move_u = Move(a, b, a-1, b)
             move_l = Move(a, b, a, b-1)
             move_r = Move(a, b, a, b+1)
             move_u_r = Move(a, b, a-1, b+1)
@@ -115,7 +114,7 @@ class ChessModel:
                     self.set_next_player()
                     if not self.in_check(self.current_player):
                         self.undo()
-                        self.set_next_player()
+                        self.undo()
                         return False
                     self.undo()
                     self.set_next_player()
@@ -132,12 +131,16 @@ class ChessModel:
                                             self.set_next_player()
                                             if not self.in_check(self.current_player):
                                                 self.undo()
-                                                self.set_next_player()
+                                                self.undo()
                                                 return False
                                             self.undo()
                                             self.set_next_player()
+            self.undo()
+            self.set_next_player()
             return True
         else:
+            self.undo()
+            self.set_next_player()
             return False
 
     def is_valid_move(self, move):
