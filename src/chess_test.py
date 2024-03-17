@@ -10,24 +10,18 @@ from queen import Queen
 from king import King
 from chess_model import ChessModel
 
-def clear():
-    model.board = [[None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None],
-                   [None, None, None, None, None, None, None, None]]
 
-model = ChessModel
-rook = Rook(model.current_player)
-queen = Queen(model.current_player)
-bishop = Bishop(model.current_player)
-knight = Knight(model.current_player)
-pawn = Pawn(model.current_player)
-king = King(model.current_player)
-clear()
+def clear():
+    return [[None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None],
+            [None, None, None, None, None, None, None, None]]
+
+
 
 class chess_model_test(unittest.TestCase):
 
@@ -39,15 +33,67 @@ class chess_model_test(unittest.TestCase):
 
     def test_is_complete(self):
         com_model = ChessModel()
-        move = Move(6,5, 5,5)
-        com_model.move(move)
-        move = Move(1, 4, 2,4)
-        com_model.move(move)
-        move = Move(6, 6, 4, 6)
-        com_model.move(move)
-        move = Move(0, 3, 4, 7)
-        com_model.move(move)
-        self.assertTrue(com_model.is_complete(), True)
+        rook_w = Rook(com_model.current_player)
+        queen_w = Queen(com_model.current_player)
+        bishop_w = Bishop(com_model.current_player)
+        knight_w = Knight(com_model.current_player)
+        pawn_w = Pawn(com_model.current_player)
+        king_w = King(com_model.current_player)
+        com_model.set_next_player()
+        rook_b = Rook(com_model.current_player)
+        queen_b = Queen(com_model.current_player)
+        bishop_b = Bishop(com_model.current_player)
+        knight_b = Knight(com_model.current_player)
+        pawn_b = Pawn(com_model.current_player)
+        king_b = King(com_model.current_player)
+        com_model.set_next_player()
+        com_model.board = clear()
+        com_model.set_piece(0, 3, king_w)
+        com_model.set_piece(0, 0, bishop_w)
+        com_model.set_piece(0, 4, rook_w)
+        com_model.set_piece(0, 2, rook_w)
+        com_model.set_piece(3, 3, queen_b)
+        self.assertFalse(com_model.is_complete())
+        com_model.board = clear()
+        com_model.set_piece(0, 3, king_w)
+        com_model.set_piece(0, 0, bishop_w)
+        com_model.set_piece(0, 4, rook_w)
+        com_model.set_piece(0, 2, rook_w)
+        com_model.set_piece(1, 4, rook_w)
+        com_model.set_piece(1, 2, rook_w)
+        com_model.set_piece(2, 3, queen_b)
+        self.assertFalse(com_model.is_complete())
+        com_model.board = clear()
+        com_model.set_piece(0, 3, king_w)
+        com_model.set_piece(6, 3, queen_b)
+        com_model.set_piece(6, 4, queen_b)
+        com_model.set_piece(6, 2, queen_b)
+        self.assertTrue(com_model.is_complete())
+        com_model.board = clear()
+        com_model.set_piece(0, 3, king_w)
+        com_model.set_piece(1, 3, pawn_w)
+        com_model.set_piece(1, 2, pawn_w)
+        com_model.set_piece(0, 2, bishop_w)
+        com_model.set_piece(0, 4, bishop_w)
+        com_model.set_piece(3, 6, queen_b)
+        self.assertTrue(com_model.is_complete())
+        com_model.board = clear()
+        com_model.set_next_player()
+        com_model.set_piece(0, 3, king_b)
+        com_model.set_piece(6, 3, queen_w)
+        com_model.set_piece(6, 4, queen_w)
+        com_model.set_piece(6, 2, queen_w)
+        self.assertTrue(com_model.is_complete())
+        com_model.board = clear()
+        com_model.set_piece(0, 3, king_b)
+        com_model.set_piece(1, 3, pawn_b)
+        com_model.set_piece(1, 2, pawn_b)
+        com_model.set_piece(0, 2, bishop_b)
+        com_model.set_piece(0, 4, bishop_b)
+        com_model.set_piece(3, 6, queen_w)
+        self.assertTrue(com_model.is_complete())
+
+
 
     def test_move(self):
         pass
@@ -56,10 +102,13 @@ class chess_model_test(unittest.TestCase):
         pass
 
 
-
 class chess_valid(unittest.TestCase):
+
     def test_piece(self):
-        model.set_piece(model, 4, 3, rook)
+        model = ChessModel
+        rook = Rook(model.current_player)
+        model.board = clear()
+        model.set_piece(model,4, 3, rook)
         model.set_piece(model, 0, 3, rook)
         move = Move(4, 3, 5, 3)
         self.assertTrue(rook.is_valid_move(move, model.board))
@@ -73,7 +122,7 @@ class chess_valid(unittest.TestCase):
         self.assertFalse(rook.is_valid_move(move, model.board))
         move = Move(4, 3, 0, 3)
         self.assertFalse(rook.is_valid_move(move, model.board))
-        clear()
+        model.board = clear()
 
     def test_pawn(self):
         pass
@@ -82,6 +131,9 @@ class chess_valid(unittest.TestCase):
         pass
 
     def test_bishop(self):
+        model = ChessModel
+        bishop = Bishop(model.current_player)
+        model.board = clear()
         model.set_piece(model, 5, 3, bishop)
         model.set_piece(model, 3, 5, bishop)
         move = Move(5, 3, 7, 1)
@@ -94,9 +146,12 @@ class chess_valid(unittest.TestCase):
         self.assertFalse(bishop.is_valid_move(move, model.board))
         move = Move(5, 3, 4, 6)
         self.assertFalse(bishop.is_valid_move(move, model.board))
-        clear()
+        model.board = clear()
 
     def test_rook(self):
+        model = ChessModel
+        rook = Rook(model.current_player)
+        model.board = clear()
         model.set_piece(model, 4, 3, rook)
         model.set_piece(model, 6, 3, rook)
         move = Move(4, 3, 5, 3)
@@ -113,9 +168,12 @@ class chess_valid(unittest.TestCase):
         self.assertFalse(rook.is_valid_move(move, model.board))
         move = Move(4, 3, 7, 3)
         self.assertFalse(rook.is_valid_move(move, model.board))
-        clear()
+        model.board = clear()
 
     def test_king(self):
+        model = ChessModel
+        king = King(model.current_player)
+        model.board = clear()
         model.set_piece(model, 5, 3, king)
         move = Move(5, 3, 7, 3)
         self.assertFalse(king.is_valid_move(move, model.board))
@@ -125,7 +183,7 @@ class chess_valid(unittest.TestCase):
         self.assertTrue(king.is_valid_move(move, model.board))
         move = Move(5, 3, 4, 2)
         self.assertTrue(king.is_valid_move(move, model.board))
-        clear()
+        model.board = clear()
 
     def test_queen(self):
         pass
