@@ -200,8 +200,8 @@ class ChessModel:
                     if self.piece_at(a - 2, b + 1).player != p:
                         return True
             if b - 1 >= 0:
-                if isinstance(self.piece_at(a+2, b-1), Knight):
-                    if self.piece_at(a + 2, b - 1).player != p:
+                if isinstance(self.piece_at(a-2, b-1), Knight):
+                    if self.piece_at(a - 2, b - 1).player != p:
                         return True
         if (b + 2) < 8:
             if a + 1 < 8:
