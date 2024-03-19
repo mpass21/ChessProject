@@ -8,6 +8,7 @@ from knight import Knight
 from bishop import Bishop
 from queen import Queen
 from king import King
+from move import Move
 import copy
 
 class MoveValidity(Enum):
@@ -103,7 +104,6 @@ class ChessModel:
                                             return False
    
         return True
-
     def is_valid_move(self, move):
         start_row, start_col = move.from_row, move.from_col
         piece = self.board[start_row][start_col]
@@ -123,38 +123,48 @@ class ChessModel:
         board[move.from_row][move.from_col] = None
     
     def in_check_pt2(self,player,board):
+        kingRow = None
+        kingCol = None
         for row in range(8):
             for col in range(8):
-                piece = board[row][col]
-                if piece and piece.player == player and isinstance(piece, King):
-                    king_row, king_col = row, col
+                if isinstance(board[row][col], King) and board[row][col].player == player:
+                    kingRow = row
+                    kingCol = col
                     break
 
         knight_moves = [(1, 2), (1, -2), (-1, 2), (-1, -2),
                         (2, 1), (2, -1), (-2, 1), (-2, -1)]
-        for dr, dc in knight_moves:
-            new_row, new_col = king_row + dr, king_col + dc
-            if 0 <= new_row < 8 and 0 <= new_col < 8:
-                if isinstance(board[new_row][new_col], Knight):
-                    if board[new_row][new_col].player != player:
-                        return True
 
-        
-        if player == Player.WHITE:
-            pawn_direction = 1 
-        else: pawn_direction = -1
-        pawn_attacks = [(pawn_direction, 1), (pawn_direction, -1)]
-        for dr, dc in pawn_attacks:
-            new_row, new_col = king_row + dr, king_col + dc
-            if 0 <= new_row < 8 and 0 <= new_col < 8:
-                if isinstance(board[new_row][new_col], Pawn):
-                    if board[new_row][new_col].player != player:
-                        return True
+        for row, col in knight_moves:
+            attack_row, attack_col = kingRow + row, kingCol + col
+            if 0 <= attack_row < 8 and 0 <= attack_col < 8:
+                if isinstance(board[attack_row][attack_col], Knight) and board[attack_row][attack_col].player != player:
+                    return True
+                
+        king_moves = [(-1,-1),(-1,0),(-1,1),(0,-1),(0,1),(1,-1),(1,0),(1,1)]
+        for row, col in king_moves:
+            attack_row, attack_col = kingRow + row, kingCol + col
+            if 0 <= attack_row < 8 and 0 <= attack_col < 8:
+                if isinstance(board[attack_row][attack_col], King) and board[attack_row][attack_col].player != player:
+                    return True
 
+
+        if player== Player.WHITE:
+            pawn_moves = (-1, -1), (-1, 1)
+        else:
+            pawn_moves = (1, 1), (1, -1)
+
+        for row, col in pawn_moves:
+            attack_row, attack_col = kingRow + row, kingCol + col
+            if 0 <= attack_row < 8 and 0 <= attack_col < 8:
+                if isinstance(board[attack_row][attack_col], Pawn) and board[attack_row][attack_col].player != player:
+                    return True
+
+     
         diagonal_directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         for dr, dc in diagonal_directions:
             for i in range(1, 8):
-                new_row, new_col = king_row + i * dr, king_col + i * dc
+                new_row, new_col = kingRow + i * dr, kingCol + i * dc
                 if 0 <= new_row < 8 and 0 <= new_col < 8:
                     if board[new_row][new_col]:
                         if board[new_row][new_col].player == player:
@@ -166,10 +176,11 @@ class ChessModel:
                 else:
                     break
 
+      
         horizontal_vertical_directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for dr, dc in horizontal_vertical_directions:
             for i in range(1, 8):
-                new_row, new_col = king_row + i * dr, king_col + i * dc
+                new_row, new_col = kingRow + i * dr, kingCol + i * dc
                 if 0 <= new_row < 8 and 0 <= new_col < 8:
                     if board[new_row][new_col]:
                         if board[new_row][new_col].player == player:
@@ -328,7 +339,8 @@ class ChessModel:
                             if self.piece_at(a, (b-i)+j) is not None:
                                 break
         return False
-             
+
+                
     def piece_at(self, row: int, col: int):
         if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
@@ -352,6 +364,7 @@ class ChessModel:
         for row in board:
             newBoard.append(copy.copy(row))
         return newBoard
+    
 
     def undo(self):
         if len(self.moveList) > 1:
@@ -360,5 +373,3 @@ class ChessModel:
             self.set_next_player()
         else:
             raise UndoException("No moves left to undo")
-
-
