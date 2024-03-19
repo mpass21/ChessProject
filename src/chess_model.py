@@ -46,6 +46,7 @@ class ChessModel:
         self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
+        self.ai = False
         self.__message_code = MoveValidity
         self.set_piece(0, 0, Rook(self.current_player))
         self.set_piece(0, 1, Knight(self.current_player))
@@ -365,8 +366,29 @@ class ChessModel:
         if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
 
+    def ai_move(self, board):
+        if self.in_check(Player.BLACK):
+            piece_lst = [Queen, Rook, Bishop, Knight, Pawn, King]
+            for i in range(0, 8):
+                for j in range(0, 8):
+                    for piece in piece_lst:
+                        if isinstance(self.piece_at(i, j), piece):
+                            if self.piece_at(i, j).player == Player.BLACK:
+                                for x in range(0, 8):
+                                    for y in range(0, 8):
+                                        move = Move(i, j, x, y)
+                                        if self.piece_at(i, j).is_valid_move(move, board):
+                                            self.move_piece_test(board,move)
+                                            if not self.in_check_pt2(Player.BLACK, board):
+                                                return move
+
     def set_next_player(self):
         self.__player = Player.next(self.__player)
+        if not self.is_complete():
+            if self.__player == Player.BLACK and self.ai is True:
+                board = self.copy_board(self.board)
+                move = self.ai_move(board)
+                self.move(move)
 
     def set_piece(self, row: int, col: int, piece: ChessPiece):
         self.board[row][col] = piece
