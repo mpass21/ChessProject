@@ -68,7 +68,6 @@ class GUI:
                 if event.type == pg.MOUSEBUTTONDOWN:
                     x, y = pg.mouse.get_pos()
                     y, x = self.__get_coords__(y, x)
-                    print(y,x)
                     try:
                         piece = self.__model.piece_at(y, x)
                     except IndexError:

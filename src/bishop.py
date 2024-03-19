@@ -10,28 +10,32 @@ class Bishop(ChessPiece):
 
     def is_valid_move(self, move, board):
         valid = super().is_valid_move(move, board)
-        if valid:
-            pass
-        else:
+        start_row, start_col = move.from_row, move.from_col
+        end_row, end_col = move.to_row, move.to_col
+        
+        if not valid:
             return False
-        if not (abs(move.to_row - move.from_row) > 0 and abs(move.to_col - move.from_col) > 0):
+        
+        if not abs(start_row - end_row) == abs(start_col - end_col):
             return False
-        if move.to_row - move.from_row > 0:
-            if move.to_col - move.from_col > 0:
-                for i in range(1, abs(move.to_row - move.from_row)):
-                    if board[move.from_row + i][move.from_col + i] is not None:
-                        return False
-            else:
-                for i in range(1, abs(move.to_row - move.from_row)):
-                    if board[move.from_row + i][move.from_col - i] is not None:
-                        return False
+
+
+        if end_row > start_row:
+            rowChange = 1
         else:
-            if move.to_col - move.from_col > 0:
-                for i in range(1, abs(move.to_row - move.from_row)):
-                    if board[move.from_row - i][move.from_col + i] is not None:
-                        return False
-            else:
-                for i in range(1, abs(move.to_row - move.from_row)):
-                    if board[move.from_row - i][move.from_col - i] is not None:
-                        return False
+            rowChange = -1
+        if end_col > start_col:
+            colChange = 1
+        else:
+            colChange = -1 
+        
+        rowCount = start_row + rowChange
+        colCount = start_col + colChange
+
+        while rowCount != end_row and colCount != end_col:
+            if board[rowCount][colCount] is not None:
+                return False
+            rowCount += rowChange
+            colCount += colChange
         return True
+

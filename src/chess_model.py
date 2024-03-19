@@ -8,7 +8,6 @@ from knight import Knight
 from bishop import Bishop
 from queen import Queen
 from king import King
-from move import Move
 import copy
 
 class MoveValidity(Enum):
@@ -88,28 +87,104 @@ class ChessModel:
         return self.__message_code
 
     def is_complete(self):
-        pass
+        piece_lst = [Queen, Rook, Bishop, Knight, Pawn, King]
+        for i in range(0, 8):
+            for j in range(0, 8):
+                for piece in piece_lst:
+                    if isinstance(self.piece_at(i, j), piece):
+                        if self.piece_at(i, j).player == self.current_player:
+                            for x in range(0, 8):
+                                for y in range(0, 8):
+                                    move = Move(i,j,x,y)
+                                    if self.piece_at(i, j).is_valid_move(move, self.board):
+                                        testBoard = self.copy_board(self.board)
+                                        self.move_piece_test(testBoard, move)
+                                        if not self.in_check_pt2(self.current_player, testBoard):
+                                            return False
+   
+        return True
 
     def is_valid_move(self, move):
         start_row, start_col = move.from_row, move.from_col
         piece = self.board[start_row][start_col]
-        if not piece:
+        if not piece:   
             return False
-        x =piece.is_valid_move(move, self.board)
-        self.move(move)
-        if self.current_player == Player.WHITE:
-            if self.in_check(Player.BLACK):
-                x = False
-        else:
-            if self.in_check(Player.WHITE):
-                x = False
-        self.undo()
-        return x
+        
+        testBoard = self.copy_board(self.board)
+        self.move_piece_test(testBoard, move)
+        if self.in_check_pt2(self.current_player,testBoard):
+            return False
 
-         
+        return piece.is_valid_move(move, self.board)
+
+    def move_piece_test(self, board, move):
+        piece = board[move.from_row][move.from_col]
+        board[move.to_row][move.to_col] = piece
+        board[move.from_row][move.from_col] = None
+    
+    def in_check_pt2(self,player,board):
+        for row in range(8):
+            for col in range(8):
+                piece = board[row][col]
+                if piece and piece.player == player and isinstance(piece, King):
+                    king_row, king_col = row, col
+                    break
+
+        knight_moves = [(1, 2), (1, -2), (-1, 2), (-1, -2),
+                        (2, 1), (2, -1), (-2, 1), (-2, -1)]
+        for dr, dc in knight_moves:
+            new_row, new_col = king_row + dr, king_col + dc
+            if 0 <= new_row < 8 and 0 <= new_col < 8:
+                if isinstance(board[new_row][new_col], Knight):
+                    if board[new_row][new_col].player != player:
+                        return True
+
+        
+        if player == Player.WHITE:
+            pawn_direction = 1 
+        else: pawn_direction = -1
+        pawn_attacks = [(pawn_direction, 1), (pawn_direction, -1)]
+        for dr, dc in pawn_attacks:
+            new_row, new_col = king_row + dr, king_col + dc
+            if 0 <= new_row < 8 and 0 <= new_col < 8:
+                if isinstance(board[new_row][new_col], Pawn):
+                    if board[new_row][new_col].player != player:
+                        return True
+
+        diagonal_directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
+        for dr, dc in diagonal_directions:
+            for i in range(1, 8):
+                new_row, new_col = king_row + i * dr, king_col + i * dc
+                if 0 <= new_row < 8 and 0 <= new_col < 8:
+                    if board[new_row][new_col]:
+                        if board[new_row][new_col].player == player:
+                            break
+                        elif isinstance(board[new_row][new_col], (Bishop, Queen)):
+                            return True
+                        else:
+                            break
+                else:
+                    break
+
+        horizontal_vertical_directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+        for dr, dc in horizontal_vertical_directions:
+            for i in range(1, 8):
+                new_row, new_col = king_row + i * dr, king_col + i * dc
+                if 0 <= new_row < 8 and 0 <= new_col < 8:
+                    if board[new_row][new_col]:
+                        if board[new_row][new_col].player == player:
+                            break
+                        elif isinstance(board[new_row][new_col], (Rook, Queen)):
+                            return True
+                        else:
+                            break
+                else:
+                    break
+
+        return False
             
     def updateMoveList(self,board):
-        copied_board = copy.deepcopy(board)
+        copied_board = self.copy_board(board)
         self.moveList.append(copied_board)
 
     def move(self, move):
@@ -253,8 +328,7 @@ class ChessModel:
                             if self.piece_at(a, (b-i)+j) is not None:
                                 break
         return False
-
-                
+             
     def piece_at(self, row: int, col: int):
         if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
@@ -273,24 +347,18 @@ class ChessModel:
                 raise ValueError
         else:
             raise ValueError
-    def printBoard(self,board):
+    def copy_board(self, board):
+        newBoard = []
         for row in board:
-            for col in row:
-                if col:
-                    print(["P"],end="")
-                else:
-                    print(["."], end="")
-            print("")
-        print("")
- 
-    def undo(self):
+            newBoard.append(copy.copy(row))
+        return newBoard
 
-        if len(self.moveList) >= 1:
+    def undo(self):
+        if len(self.moveList) > 1:
             self.moveList.pop()  
-            self.board = copy.deepcopy(self.moveList[-1])
+            self.board = self.copy_board(self.moveList[-1])
             self.set_next_player()
         else:
             raise UndoException("No moves left to undo")
 
-    
-    
+
