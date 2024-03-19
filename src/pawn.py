@@ -4,13 +4,40 @@ from player import Player
 
 
 class Pawn(ChessPiece):
+    """
+    An abstract class that represents a pawn
+
+    Attributes
+    ___________
+    player: Player
+        The type of player the piece is
+
+    Methods
+    _______
+    player:
+        Returns the player of the piece
+    type:
+        Returns pawn for the type of piece
+    is_valid_move(move: Move, board, lst[lst[]]):
+        Checks if the move is a valid move for a pawn
+    """
     def __init__(self, player: Player):
+        """
+        Constructs the pawn piece
+
+        Parameters
+        __________
+        player : Player
+            the player of the chess piece
+        """
         super().__init__(player)
 
     def __str__(self):
+        """returns name of piece"""
         return "Pawn"
 
     def type(self):
+        """returns type of piece"""
         return "Pawn"
 
     def is_valid_move(self, move: Move, board):
