@@ -127,6 +127,7 @@ class chess_model_test(unittest.TestCase):
         com_model.set_piece(0, 2, rook_w)
         com_model.set_piece(2, 3, queen_b)
         self.assertFalse(com_model.is_complete())
+        self.assertEqual(com_model.current_player, Player.WHITE)
         com_model.board = clear()
         '''king cant move, move knight to block'''
         com_model.set_piece(0, 3, king_w)
@@ -137,6 +138,7 @@ class chess_model_test(unittest.TestCase):
         com_model.set_piece(1, 4, knight_w)
         com_model.set_piece(6, 3, queen_b)
         self.assertFalse(com_model.is_complete())
+        self.assertEqual(com_model.current_player, Player.WHITE)
         com_model.board = clear()
         '''King can move'''
         com_model.set_piece(4, 3, king_w)
@@ -147,6 +149,7 @@ class chess_model_test(unittest.TestCase):
         com_model.set_piece(2, 5, bishop_b)
         com_model.set_piece(1, 3, queen_b)
         self.assertFalse(com_model.is_complete())
+        self.assertEqual(com_model.current_player, Player.WHITE)
         com_model.board = clear()
         '''king cant move, no piece to help'''
         com_model.set_piece(0, 3, king_w)
@@ -154,6 +157,7 @@ class chess_model_test(unittest.TestCase):
         com_model.set_piece(6, 4, queen_b)
         com_model.set_piece(6, 2, queen_b)
         self.assertTrue(com_model.is_complete())
+        self.assertEqual(com_model.current_player, Player.WHITE)
         com_model.board = clear()
         '''king cant move, rook captures'''
         com_model.set_piece(3, 3, king_w)
@@ -207,6 +211,7 @@ class chess_model_test(unittest.TestCase):
         com_model.set_piece(6, 4, queen_w)
         com_model.set_piece(6, 2, queen_w)
         self.assertTrue(com_model.is_complete())
+        self.assertEqual(com_model.current_player, Player.BLACK)
         com_model.board = clear()
         '''other player, not checkmate'''
         com_model.set_piece(0, 3, king_b)
