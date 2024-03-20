@@ -372,22 +372,23 @@ class ChessModel:
                                             if not self.in_check_pt2(Player.BLACK, testBoard):
                                                 return move
         for i in range(0, 8):
-            for j in range(0, 8):
+            for j in range(7, -1, -1):
                 for piece in piece_lst:
                     if isinstance(self.piece_at(i, j), piece):
                         if self.piece_at(i, j).player == Player.BLACK:
-                            for x in range(0, 8):
-                                for y in range(0, 8):
+                            for x in range(7, -1, -1):
+                                for y in range(7, -1, -1):
                                     move = Move(i, j, x, y)
                                     if self.piece_at(i, j).is_valid_move(move, board):
                                         testBoard = self.copy_board(self.board)
                                         self.move_piece_test(testBoard, move)
                                         if not self.in_check_pt2(Player.BLACK, testBoard):
                                             if self.in_check_pt2(Player.WHITE, testBoard):
-                                                return move
+                                                if not self.in_danger(x, y, testBoard, Player.BLACK):
+                                                    return move
         for piece in piece_lst:
-            for j in range(0, 8):
-                for i in range(0, 8):
+            for i in range(0,8):
+                for j in range(0, 8):
                     if isinstance(self.piece_at(i, j), piece):
                         if self.piece_at(i, j).player == Player.BLACK:
                             if self.in_danger(i, j, self.board, Player.BLACK):
@@ -400,8 +401,8 @@ class ChessModel:
                                             if not self.in_check_pt2(Player.BLACK, testBoard):
                                                 if self.piece_at(x, y) is not None:
                                                     return move
-                                for x in range(0, 8):
-                                    for y in range(0, 8):
+                                for x in range(7, -1, -1):
+                                    for y in range(7, -1, -1):
                                         move = Move(i, j, x, y)
                                         if self.piece_at(i, j).is_valid_move(move, board):
                                             testBoard = self.copy_board(self.board)
@@ -410,22 +411,8 @@ class ChessModel:
                                                 if not self.in_danger(x, y, testBoard, Player.BLACK):
                                                     return move
         for piece in piece_lst:
-            for j in range(0, 8):
-                for i in range(0, 8):
-                    if isinstance(self.piece_at(i, j), piece):
-                        if self.piece_at(i, j).player == Player.BLACK:
-                            for x in range(0, 8):
-                                for y in range(0, 8):
-                                    move = Move(i, j, x, y)
-                                    if self.piece_at(i, j).is_valid_move(move, board):
-                                        testBoard = self.copy_board(self.board)
-                                        self.move_piece_test(testBoard, move)
-                                        if not self.in_check_pt2(Player.BLACK, testBoard):
-                                            if self.piece_at(x, y) is not None:
-                                                return move
-        for piece in piece_lst:
-            for j in range(0, 8):
-                for i in range(0, 8):
+            for i in range(0, 8):
+                for j in range(0, 8):
                     if isinstance(self.piece_at(i, j), piece):
                         if self.piece_at(i, j).player == Player.BLACK:
                             for x in range(7, -1, -1):
@@ -435,25 +422,50 @@ class ChessModel:
                                         testBoard = self.copy_board(self.board)
                                         self.move_piece_test(testBoard, move)
                                         if not self.in_check_pt2(Player.BLACK, testBoard):
+                                            if self.piece_at(x, y) is not None:
+                                                return move
+        for piece in piece_lst:
+            for i in range(0,8):
+                for j in range(0, 8):
+                    if isinstance(self.piece_at(i, j), piece):
+                        if self.piece_at(i, j).player == Player.BLACK:
+                            for x in range(7, -1, -1):
+                                for y in range(7, -1, -1):
+                                    move = Move(i, j, x, y)
+                                    if self.piece_at(i, j).is_valid_move(move, board):
+                                        testBoard = self.copy_board(self.board)
+                                        self.move_piece_test(testBoard, move)
+                                        if not self.in_check_pt2(Player.BLACK, testBoard):
+                                            for a in range(7, -1, -1):
+                                                for b in range(7, -1, -1):
+                                                    if self.in_danger(a, b, testBoard, Player.BLACK):
+                                                        move = None
+                                                if move is None:
+                                                    break
+                                            if move is not None:
+                                                return move
+                            for x in range(7, -1, -1):
+                                for y in range(7, -1, -1):
+                                    move = Move(i, j, x, y)
+                                    if self.piece_at(i, j).is_valid_move(move, board):
+                                        testBoard = self.copy_board(self.board)
+                                        self.move_piece_test(testBoard, move)
+                                        if not self.in_check_pt2(Player.BLACK, testBoard):
                                             if not self.in_danger(x, y, testBoard, Player.BLACK):
                                                 return move
-        for x in range(7, -1, -1):
-            for y in range(7, -1, -1):
-                move = Move(i, j, x, y)
-                if self.piece_at(i, j).is_valid_move(move, board):
-                    testBoard = self.copy_board(self.board)
-                    self.move_piece_test(testBoard, move)
-                    if not self.in_check_pt2(Player.BLACK, testBoard):
-                        if not self.in_danger(x, y, testBoard, Player.BLACK):
-                            return move
-        for x in range(7, -1, -1):
-            for y in range(7, -1, -1):
-                move = Move(i, j, x, y)
-                if self.piece_at(i, j).is_valid_move(move, board):
-                    testBoard = self.copy_board(self.board)
-                    self.move_piece_test(testBoard, move)
-                    if not self.in_check_pt2(Player.BLACK, testBoard):
-                        return move
+                            for x in range(7, -1, -1):
+                                for y in range(7, -1, -1):
+                                    move = Move(i, j, x, y)
+                                    if self.piece_at(i, j).is_valid_move(move, board):
+                                        testBoard = self.copy_board(self.board)
+                                        self.move_piece_test(testBoard, move)
+                                        if not self.in_check_pt2(Player.BLACK, testBoard):
+                                            return move
+                            for x in range(7, -1, -1):
+                                for y in range(7, -1, -1):
+                                    move = Move(i, j, x, y)
+                                    if self.piece_at(i, j).is_valid_move(move, board):
+                                        return move
 
     def in_danger(self, x, y, board, player):
         piece_row = x
@@ -536,3 +548,6 @@ class ChessModel:
             self.board = self.copy_board(self.moveList[-1])
         else:
             raise UndoException()
+
+    def get_board(self):
+        return self.board
