@@ -60,7 +60,7 @@ class ChessModel:
         self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
-        self.ai = True
+        self.ai = False
         self.__message_code = None
         self.set_piece(0, 0, Rook(self.current_player))
         self.set_piece(0, 1, Knight(self.current_player))
@@ -85,7 +85,6 @@ class ChessModel:
             self.set_piece(6, i, Pawn(self.current_player))
         self.updateMoveList(self.board)
 
-    
     @property
     def nrows(self):
         """Return the amount of rows in the board"""
@@ -126,7 +125,7 @@ class ChessModel:
                                     if self.piece_at(i, j).is_valid_move(move, self.board):
                                         testBoard = self.copy_board(self.board)
                                         self.move_piece_test(testBoard, move)
-                                        if not self.in_check_pt2(self.current_player, testBoard):
+                                        if not self.in_check(self.current_player, testBoard):
                                             return False
         return True
     
@@ -149,7 +148,7 @@ class ChessModel:
         
         testBoard = self.copy_board(self.board)
         self.move_piece_test(testBoard, move)
-        if self.in_check_pt2(self.current_player,testBoard):
+        if self.in_check(self.current_player,testBoard):
             return False
         return piece.is_valid_move(move, self.board)
 
@@ -165,7 +164,7 @@ class ChessModel:
         board[move.to_row][move.to_col] = piece
         board[move.from_row][move.from_col] = None
     
-    def in_check_pt2(self,player, board=None):
+    def in_check(self,player, board=None):
         """checks if piece is in check based on the given parameters
 
             Parameters:
@@ -175,7 +174,7 @@ class ChessModel:
 
         if board is None:
             board = self.board
-            
+
         #finding the players king on the board
         kingRow = None
         kingCol = None
@@ -272,139 +271,6 @@ class ChessModel:
         self.board[move.from_row][move.from_col] = None
         self.updateMoveList(self.board)
         self.set_next_player()
-
-    def in_check(self, p):
-        a = 0
-        b = 0
-        for i in range(0, 8):
-            for j in range(0, 8):
-                if isinstance(self.piece_at(i, j), King) and self.piece_at(i, j).player == p:
-                    a = i
-                    b = j
-                    break
-        if (a + 2) < 8:
-            if b + 1 < 8:
-                if isinstance(self.piece_at(a+2, b+1), Knight):
-                    if self.piece_at(a + 2, b + 1).player != p:
-                        return True
-            if b - 1 >= 0:
-                if isinstance(self.piece_at(a+2, b-1), Knight):
-                    if self.piece_at(a + 2, b - 1).player != p:
-                        return True
-        if (a - 2) >= 0:
-            if b + 1 < 8:
-                if isinstance(self.piece_at(a-2, b+1), Knight):
-                    if self.piece_at(a - 2, b + 1).player != p:
-                        return True
-            if b - 1 >= 0:
-                if isinstance(self.piece_at(a+2, b-1), Knight):
-                    if self.piece_at(a + 2, b - 1).player != p:
-                        return True
-        if (b + 2) < 8:
-            if a + 1 < 8:
-                if isinstance(self.piece_at(a+1, b+2), Knight):
-                    if self.piece_at(a + 1, b + 2).player != p:
-                        return True
-            if a - 1 >= 0:
-                if isinstance(self.piece_at(a-1, b+2), Knight):
-                    if self.piece_at(a - 1, b + 2).player != p:
-                        return True
-        if (b - 2) >= 0:
-            if a + 1 < 8:
-                if isinstance(self.piece_at(a+1, b-2), Knight):
-                    if self.piece_at(a + 1, b - 2).player != p:
-                        return True
-            if a - 1 >= 0:
-                if isinstance(self.piece_at(a-1, b-2), Knight):
-                    if self.piece_at(a - 1, b - 2).player != p:
-                        return True
-
-        if a - 1 >= 0:
-            if b + 1 < 8:
-                if isinstance(self.piece_at(a-1, b+1), Pawn):
-                    if self.piece_at(a - 1, b + 1).player != p:
-                        return True
-            if b - 1 >= 0:
-                if isinstance(self.piece_at(a-1, b-1), Pawn):
-                    if self.piece_at(a - 1, b - 1).player != p:
-                        return True
-        if a + 1 < 8:
-            if b + 1 < 8:
-                if isinstance(self.piece_at(a+1, b+1), Pawn):
-                    if self.piece_at(a + 1, b + 1).player != p:
-                        return True
-            if b - 1 >= 0:
-                if isinstance(self.piece_at(a+1, b-1), Pawn):
-                    if self.piece_at(a + 1, b - 1).player != p:
-                        return True
-                    
-
-        for i in range(1, 8):
-            if a + i < 8:
-                if isinstance(self.piece_at(a+i, b), Rook) or isinstance(self.piece_at(a+i, b), Queen):
-                    if self.piece_at(a + i, b).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at((a+i)-j, b), King):
-                                return True
-                            if self.piece_at((a+i)-j, b) is not None:
-                                break
-                if b + i < 8:
-                    if isinstance(self.piece_at(a + i, b+i), Bishop) or isinstance(self.piece_at(a + i, b+i), Queen):
-                        if self.piece_at(a + i, b+i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a+i) - j, (b+i) - j), King):
-                                    return True
-                                if self.piece_at((a+i) - j, (b+i) - j) is not None:
-                                    break
-                if b - i >= 0:
-                    if isinstance(self.piece_at(a + i, b-i), Bishop) or isinstance(self.piece_at(a + i, b-i), Queen):
-                        if self.piece_at(a + i, b-i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a+i) - j, (b-i) + j), King):
-                                    return True
-                                if self.piece_at((a+i) - j, (b-i) + j) is not None:
-                                    break
-            if a - i >= 0:
-                if isinstance(self.piece_at(a - i, b), Rook) or isinstance(self.piece_at(a - i, b), Queen):
-                    if self.piece_at(a - i, b).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at((a-i)+j, b), King):
-                                return True
-                            if self.piece_at((a-i)+j, b) is not None:
-                                break
-                if b + i < 8:
-                    if isinstance(self.piece_at(a - i, b+i), Bishop) or isinstance(self.piece_at(a - i, b+i), Queen):
-                        if self.piece_at(a - i, b+i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a-i) + j, (b+i) - j), King):
-                                    return True
-                                if self.piece_at((a-i) + j, (b+i) - j) is not None:
-                                    break
-                if b - i >= 0:
-                    if isinstance(self.piece_at(a - i, b-i), Bishop) or isinstance(self.piece_at(a - i, b-i), Queen):
-                        if self.piece_at(a - i, b-i).player != p:
-                            for j in range(1, i + 1):
-                                if isinstance(self.piece_at((a-i) + j, (b-i) + j), King):
-                                    return True
-                                if self.piece_at((a-i) + j, (b-i) + j) is not None:
-                                    break
-            if b + i < 8:
-                if isinstance(self.piece_at(a, b+i), Rook) or isinstance(self.piece_at(a, b+i), Queen):
-                    if self.piece_at(a, b+i).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, (b+i)-j), King):
-                                return True
-                            if self.piece_at(a, (b+i)-j) is not None:
-                                break
-            if b - i >= 0:
-                if isinstance(self.piece_at(a, b-i), Rook) or isinstance(self.piece_at(a, b-i), Queen):
-                    if self.piece_at(a, b-i).player != p:
-                        for j in range(1, i+1):
-                            if isinstance(self.piece_at(a, (b-i)+j), King):
-                                return True
-                            if self.piece_at(a, (b-i)+j) is not None:
-                                break
-        return False
               
     def piece_at(self, row: int, col: int):
         """Takes a position on self.board and returns the piece at the location
@@ -453,7 +319,7 @@ class ChessModel:
                                             if self.piece_at(i, j).is_valid_move(move, board):
                                                 testBoard = self.copy_board(self.board)
                                                 self.move_piece_test(testBoard, move)
-                                                if not self.in_check_pt2(Player.BLACK, testBoard):
+                                                if not self.in_check(Player.BLACK, testBoard):
                                                     return move
             
             for i in range(0, 8):
@@ -467,8 +333,8 @@ class ChessModel:
                                         if self.piece_at(i, j).is_valid_move(move, board):
                                             testBoard = self.copy_board(self.board)
                                             self.move_piece_test(testBoard, move)
-                                            if not self.in_check_pt2(Player.BLACK, testBoard):
-                                                if self.in_check_pt2(Player.WHITE, testBoard):
+                                            if not self.in_check(Player.BLACK, testBoard):
+                                                if self.in_check(Player.WHITE, testBoard):
                                                     return move
             for piece in piece_lst:
                 for j in range(0, 8):
@@ -482,7 +348,7 @@ class ChessModel:
                                             if self.piece_at(i, j).is_valid_move(move, board):
                                                 testBoard = self.copy_board(self.board)
                                                 self.move_piece_test(testBoard, move)
-                                                if not self.in_check_pt2(Player.BLACK, testBoard):
+                                                if not self.in_check(Player.BLACK, testBoard):
                                                     if self.piece_at(x, y) is not None:
                                                         return move
                                     for x in range(0, 8):
@@ -491,7 +357,7 @@ class ChessModel:
                                             if self.piece_at(i, j).is_valid_move(move, board):
                                                 testBoard = self.copy_board(self.board)
                                                 self.move_piece_test(testBoard, move)
-                                                if not self.in_check_pt2(Player.BLACK, testBoard):
+                                                if not self.in_check(Player.BLACK, testBoard):
                                                     if not self.in_danger(x, y, testBoard, Player.BLACK):
                                                         return move
             for piece in piece_lst:
@@ -505,7 +371,7 @@ class ChessModel:
                                         if self.piece_at(i, j).is_valid_move(move, board):
                                             testBoard = self.copy_board(self.board)
                                             self.move_piece_test(testBoard, move)
-                                            if not self.in_check_pt2(Player.BLACK, testBoard):
+                                            if not self.in_check(Player.BLACK, testBoard):
                                                 if self.piece_at(x, y) is not None:
                                                     return move
             for piece in piece_lst:
@@ -519,7 +385,7 @@ class ChessModel:
                                         if self.piece_at(i, j).is_valid_move(move, board):
                                             testBoard = self.copy_board(self.board)
                                             self.move_piece_test(testBoard, move)
-                                            if not self.in_check_pt2(Player.BLACK, testBoard):
+                                            if not self.in_check(Player.BLACK, testBoard):
                                                 if not self.in_danger(x, y, testBoard, Player.BLACK):
                                                     return move
             for x in range(7, -1, -1):
@@ -528,7 +394,7 @@ class ChessModel:
                     if self.piece_at(i, j).is_valid_move(move, board):
                         testBoard = self.copy_board(self.board)
                         self.move_piece_test(testBoard, move)
-                        if not self.in_check_pt2(Player.BLACK, testBoard):
+                        if not self.in_check(Player.BLACK, testBoard):
                             if not self.in_danger(x, y, testBoard, Player.BLACK):
                                 return move
             for x in range(7, -1, -1):
@@ -537,7 +403,7 @@ class ChessModel:
                     if self.piece_at(i, j).is_valid_move(move, board):
                         testBoard = self.copy_board(self.board)
                         self.move_piece_test(testBoard, move)
-                        if not self.in_check_pt2(Player.BLACK, testBoard):
+                        if not self.in_check(Player.BLACK, testBoard):
                             return move
     
     def in_danger(self, x, y, board, player):

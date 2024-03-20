@@ -9,7 +9,6 @@ class Bishop(ChessPiece):
         return 'Bishop'
 
     def is_valid_move(self, move, board):
-    
         start_row, start_col = move.from_row, move.from_col
         end_row, end_col = move.to_row, move.to_col
         
