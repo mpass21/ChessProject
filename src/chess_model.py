@@ -34,7 +34,7 @@ class UndoException(Exception):
 
 class ChessModel:
     def __init__(self):
-  
+
         self.board = [[None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
@@ -339,8 +339,7 @@ class ChessModel:
                             if self.piece_at(a, (b-i)+j) is not None:
                                 break
         return False
-
-                
+              
     def piece_at(self, row: int, col: int):
         if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
@@ -373,3 +372,6 @@ class ChessModel:
             self.set_next_player()
         else:
             raise UndoException("No moves left to undo")
+
+    def get_board(self):
+        return self.board
