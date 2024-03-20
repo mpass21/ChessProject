@@ -36,18 +36,16 @@ class ChessModel:
     """
     Chess Model that runs a chess game through a gui
 
-    Parameters:
+    parameters:
         no parameters taken in
 
-    Raises:
-        undoException: raises the exception if undoing to many times
-        valueError: raises value error if piece is being set outside of row bounds
-        typeError: raises type error  
+    raises:
+        UndoException: raises the exception if undoing to many times
+        ValueError: raises value error if piece is being set outside of row bounds
+        TypeError: raises type error  
     """
     def __init__(self):
-        """
-        Creates a instance of chessModel and sets all pieces to resemble a chessboard
-        """
+        """creates a instance of chessModel and sets all pieces to resemble a chessboard"""
         self.board = [[None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
@@ -131,9 +129,9 @@ class ChessModel:
     
     def is_valid_move(self, move):
         """
-        Takes a move and sees if it is a valid move on self.board
+        takes a move and sees if it is a valid move on self.board
 
-        Parameters:
+        parameters:
             Move: a move object with the desired move
 
         returns:
@@ -153,10 +151,9 @@ class ChessModel:
         return piece.is_valid_move(move, self.board)
 
     def move_piece_test(self, board, move):
-        """
-        Moves a piece on a given board
+        """moves a piece on a given board
 
-        Parameters:
+        parameters:
             Board: the board that move wants to be done on, a list of lists
             Move:  the move object that specifices what piece wants to be move where
         """
@@ -167,11 +164,15 @@ class ChessModel:
     def in_check(self,player, board=None):
         """checks if piece is in check based on the given parameters
 
-            Parameters:
-                Board: the board that move wants to be done on, a list of lists
-                Move: the move object that specifices what piece wants to be move where   
+            parameters:
+                Board: a list of lists that represents a chess board
+            
+            returns: 
+                True: if there if the player on given board is not in check
+                False: if player on given board is in check
         """
-
+        
+        #sets board to self.board if no specific board is given
         if board is None:
             board = self.board
 
@@ -249,33 +250,40 @@ class ChessModel:
         return False
             
     def updateMoveList(self,board):
-        """A method that copys given board and appends it to a list
+        """a method that copys given board and appends it to a list
         
-            Parameter:
-                board: a list of list representing a chess board
+            parameter:
+                board: a list of lists representing a chess board
         """
         copied_board = self.copy_board(board)
         self.moveList.append(copied_board)
 
     def move(self, move):
         """
-            Handles a given move and applys it to self.board. Also will promote a pawn if it reaches the end of the board
+            handles a given move and applys it to self.board. Also will promote a pawn if it reaches the end of the board
 
-            Parameter:
+            parameter:
                 move: a object that contains start location and end location
         """
+        #checks if move is moving pawn to end of board
         if str(self.piece_at(move.from_row, move.from_col)) == 'Pawn' and (move.to_row == 0 or move.to_row == 7):
+
+            #replaces pawn with queen
             self.set_piece(move.to_row, move.to_col, Queen(self.current_player))
         else:
+
+            #moves piece
             self.set_piece(move.to_row, move.to_col, self.piece_at(move.from_row, move.from_col))
         self.board[move.from_row][move.from_col] = None
+
+        #updates moveList and changes player
         self.updateMoveList(self.board)
         self.set_next_player()
               
     def piece_at(self, row: int, col: int):
-        """Takes a position on self.board and returns the piece at the location
+        """takes a position on self.board and returns the piece at the location
         
-            Parameters:
+            parameters:
                 Row: a int that specifies the desired row of piece
                 Col: a int that specifies the desired col of the piece
             
@@ -283,11 +291,13 @@ class ChessModel:
                 None: returns None if no piece is found
                 Piece: returns a piece object if one is found
         """
+
+        #if the location is in bounds returns the piece
         if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
 
     def set_next_player(self):
-        """Changes the current player to opposing player"""
+        """changes the current player to opposing player"""
         self.__player = Player.next(self.__player)
         if not self.is_complete():
             if self.__player == Player.BLACK and self.ai is True:
@@ -298,10 +308,10 @@ class ChessModel:
     def ai_move(self, board):
             """logic behind the ai player that plays as black if desired
 
-                Parameters:
+                parameters:
                     Board: a list of lists that represents a chess board
                 
-                Returns: 
+                returns: 
                     a calculated move that helps the artificial player
             """
 
@@ -467,13 +477,13 @@ class ChessModel:
         return False
     
     def set_piece(self, row: int, col: int, piece: ChessPiece):
-        """Sets a piece at a specific locatin on self.board
+        """sets a piece at a specific locatin on self.board
 
-            Parameters:
+            parameters:
                 row: the specific row where the piece is to be placed on
                 col: the specific collumn where the piece is to be placed on
 
-            Raises:
+            raises:
                 UndoException: raises the exception if undoing to many times
                 ValueError: raises value error if piece is being set outside of row bounds
                 TypeError: raises type error  
@@ -492,13 +502,13 @@ class ChessModel:
             raise ValueError
         
     def copy_board(self, board):
-        """Creates a copy of given board
+        """creates a copy of a given board
         
-            Parameter:
-                Board: a list of lists that represents a chess board
+            parameter:
+                board: a list of lists that represents a chess board
             
-            Returns:
-                A list of lists that is a copy of board taken in as parameter
+            returns:
+                a list of lists that is a copy of board taken in as parameter
         """
         newBoard = []
         for row in board:
@@ -506,6 +516,11 @@ class ChessModel:
         return newBoard
     
     def undo(self):
+        """undoes the most recent move
+        
+            raises:
+                UndoException: raises error if there are no more moves to be undone
+        """
         if not self.ai:
             if len(self.moveList) > 1:
                 self.moveList.pop()
@@ -521,4 +536,5 @@ class ChessModel:
             raise UndoException()
 
     def get_board(self):
+        """returns the current state of the game as a list of lists"""
         return self.board
