@@ -9,11 +9,11 @@ class Bishop(ChessPiece):
         return 'Bishop'
 
     def is_valid_move(self, move, board):
-        valid = super().is_valid_move(move, board)
+    
         start_row, start_col = move.from_row, move.from_col
         end_row, end_col = move.to_row, move.to_col
         
-        if not valid:
+        if not super().is_valid_move(move, board):
             return False
         
         if not abs(start_row - end_row) == abs(start_col - end_col):

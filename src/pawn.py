@@ -26,14 +26,7 @@ class Pawn(ChessPiece):
             direction = 1
             begin_row = 1
 
-        if move.from_col == move.to_col and move.from_row == move.to_row:
-            return False
-        if not (0 <= start_row < 8 and 0 <= start_col < 8 and 0 <= end_row < 8 and 0 <= end_col < 8):
-            return False
-
-        if board[start_row][start_col].player != self.player:
-            return False
-        if board[start_row][start_col] != self:
+        if not super().is_valid_move(move, board):
             return False
 
         if start_col == end_col and end_row == start_row + direction and board[end_row][end_col] is None:
