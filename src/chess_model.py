@@ -33,8 +33,21 @@ class UndoException(Exception):
 
 
 class ChessModel:
-    def __init__(self):
+    """
+    Chess Model that runs a chess game through a gui
 
+    Parameters:
+        no parameters taken in
+
+    Raises:
+        undoException: raises the exception if undoing to many times
+        valueError: raises value error if piece is being set outside of row bounds
+        typeError: raises type error  
+    """
+    def __init__(self):
+        """
+        Creates a instance of chessModel and sets all pieces to resemble a chessboard
+        """
         self.board = [[None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
                       [None, None, None, None, None, None, None, None],
@@ -47,7 +60,7 @@ class ChessModel:
         self.__player = Player.BLACK
         self.__nrows = 8
         self.__ncols = 8
-        self.ai = False
+        self.ai = True
         self.__message_code = None
         self.set_piece(0, 0, Rook(self.current_player))
         self.set_piece(0, 1, Knight(self.current_player))
@@ -72,23 +85,35 @@ class ChessModel:
             self.set_piece(6, i, Pawn(self.current_player))
         self.updateMoveList(self.board)
 
+    
     @property
     def nrows(self):
+        """Return the amount of rows in the board"""
         return self.__nrows
 
     @property
     def ncols(self):
+        """Returns the amount of columns in the board"""
         return self.__ncols
 
     @property
     def current_player(self):
+        """returns the current player"""
         return self.__player
 
     @property
     def messageCode(self):
+        "returns the state of the message code"
         return self.__message_code
 
     def is_complete(self):
+        """
+        tests to see if the current player is in checkmate
+
+        returns:
+            True if the current player is in check
+            False if the current player is not in checkmate
+        """
         piece_lst = [Queen, Rook, Bishop, Knight, Pawn, King]
         for i in range(0, 8):
             for j in range(0, 8):
@@ -103,9 +128,20 @@ class ChessModel:
                                         self.move_piece_test(testBoard, move)
                                         if not self.in_check_pt2(self.current_player, testBoard):
                                             return False
-   
         return True
+    
     def is_valid_move(self, move):
+        """
+        Takes a move and sees if it is a valid move on self.board
+
+        Parameters:
+            Move: a move object with the desired move
+
+        returns:
+            True: if the move is a valid move for the piece and board
+            False: if the move is not a valid move for that piece and board
+        """
+
         start_row, start_col = move.from_row, move.from_col
         piece = self.board[start_row][start_col]
         if not piece:   
@@ -115,15 +151,32 @@ class ChessModel:
         self.move_piece_test(testBoard, move)
         if self.in_check_pt2(self.current_player,testBoard):
             return False
-
         return piece.is_valid_move(move, self.board)
 
     def move_piece_test(self, board, move):
+        """
+        Moves a piece on a given board
+
+        Parameters:
+            Board: the board that move wants to be done on, a list of lists
+            Move:  the move object that specifices what piece wants to be move where
+        """
         piece = board[move.from_row][move.from_col]
         board[move.to_row][move.to_col] = piece
         board[move.from_row][move.from_col] = None
     
-    def in_check_pt2(self,player,board):
+    def in_check_pt2(self,player, board=None):
+        """checks if piece is in check based on the given parameters
+
+            Parameters:
+                Board: the board that move wants to be done on, a list of lists
+                Move: the move object that specifices what piece wants to be move where   
+        """
+
+        if board is None:
+            board = self.board
+            
+        #finding the players king on the board
         kingRow = None
         kingCol = None
         for row in range(8):
@@ -132,7 +185,8 @@ class ChessModel:
                     kingRow = row
                     kingCol = col
                     break
-
+        
+        #checking to make sure there are no knights attacking the king
         knight_moves = [(1, 2), (1, -2), (-1, 2), (-1, -2),
                         (2, 1), (2, -1), (-2, 1), (-2, -1)]
 
@@ -149,7 +203,7 @@ class ChessModel:
                 if isinstance(board[attack_row][attack_col], King) and board[attack_row][attack_col].player != player:
                     return True
 
-
+        #checking if any pawns are attacking the king
         if player== Player.WHITE:
             pawn_moves = (-1, -1), (-1, 1)
         else:
@@ -161,7 +215,7 @@ class ChessModel:
                 if isinstance(board[attack_row][attack_col], Pawn) and board[attack_row][attack_col].player != player:
                     return True
 
-     
+        #checking if a queen or bishop is attacking the king from a diagonal position
         diagonal_directions = [(-1, -1), (-1, 1), (1, -1), (1, 1)]
         for dr, dc in diagonal_directions:
             for i in range(1, 8):
@@ -177,7 +231,7 @@ class ChessModel:
                 else:
                     break
 
-      
+        #checking if rook or queen is attacking from a horizontal/vertical position
         horizontal_vertical_directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
         for dr, dc in horizontal_vertical_directions:
             for i in range(1, 8):
@@ -196,10 +250,21 @@ class ChessModel:
         return False
             
     def updateMoveList(self,board):
+        """A method that copys given board and appends it to a list
+        
+            Parameter:
+                board: a list of list representing a chess board
+        """
         copied_board = self.copy_board(board)
         self.moveList.append(copied_board)
 
     def move(self, move):
+        """
+            Handles a given move and applys it to self.board. Also will promote a pawn if it reaches the end of the board
+
+            Parameter:
+                move: a object that contains start location and end location
+        """
         if str(self.piece_at(move.from_row, move.from_col)) == 'Pawn' and (move.to_row == 0 or move.to_row == 7):
             self.set_piece(move.to_row, move.to_col, Queen(self.current_player))
         else:
@@ -342,10 +407,21 @@ class ChessModel:
         return False
               
     def piece_at(self, row: int, col: int):
+        """Takes a position on self.board and returns the piece at the location
+        
+            Parameters:
+                Row: a int that specifies the desired row of piece
+                Col: a int that specifies the desired col of the piece
+            
+            returns:
+                None: returns None if no piece is found
+                Piece: returns a piece object if one is found
+        """
         if 0 <= row < 8 and 0 <= col < 8:
             return self.board[row][col]
 
     def set_next_player(self):
+        """Changes the current player to opposing player"""
         self.__player = Player.next(self.__player)
         if not self.is_complete():
             if self.__player == Player.BLACK and self.ai is True:
@@ -354,6 +430,16 @@ class ChessModel:
                 self.move(move)
 
     def ai_move(self, board):
+            """logic behind the ai player that plays as black if desired
+
+                Parameters:
+                    Board: a list of lists that represents a chess board
+                
+                Returns: 
+                    a calculated move that helps the artificial player
+            """
+
+            #checks if the ai is in check, if so the move generated prioritises leaving check
             piece_lst = [Pawn, Queen, Rook, Bishop, Knight, King]
             if self.in_check(Player.BLACK):
                 for i in range(0, 8):
@@ -369,6 +455,7 @@ class ChessModel:
                                                 self.move_piece_test(testBoard, move)
                                                 if not self.in_check_pt2(Player.BLACK, testBoard):
                                                     return move
+            
             for i in range(0, 8):
                 for j in range(0, 8):
                     for piece in piece_lst:
@@ -514,6 +601,19 @@ class ChessModel:
         return False
     
     def set_piece(self, row: int, col: int, piece: ChessPiece):
+        """Sets a piece at a specific locatin on self.board
+
+            Parameters:
+                row: the specific row where the piece is to be placed on
+                col: the specific collumn where the piece is to be placed on
+
+            Raises:
+                UndoException: raises the exception if undoing to many times
+                ValueError: raises value error if piece is being set outside of row bounds
+                TypeError: raises type error  
+        """
+
+        #checks if desired location is within bounds and a piece, if not it raises apropriate error
         if 0 <= row < self.__nrows:
             if 0 <= col < self.__ncols:
                 if piece is None or ChessPiece:
@@ -526,12 +626,19 @@ class ChessModel:
             raise ValueError
         
     def copy_board(self, board):
+        """Creates a copy of given board
+        
+            Parameter:
+                Board: a list of lists that represents a chess board
+            
+            Returns:
+                A list of lists that is a copy of board taken in as parameter
+        """
         newBoard = []
         for row in board:
             newBoard.append(copy.copy(row))
         return newBoard
     
-
     def undo(self):
         if not self.ai:
             if len(self.moveList) > 1:
