@@ -470,19 +470,6 @@ class chess_model_test(unittest.TestCase):
         self.undoModel.undo()
         self.assertEqual(base, self.undoModel.board)
         
-        
-
-
-       
-
-        
-
-
-    
-
-
-    
-
 if __name__ == '__main__':
     unittest.main()
     
