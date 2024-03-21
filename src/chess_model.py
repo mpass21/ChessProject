@@ -417,6 +417,19 @@ class ChessModel:
                             return move
     
     def in_danger(self, x, y, board, player):
+        """checks if piece is in danger if so it returns True
+
+            parameters: 
+                x: the row cordinate for the piece to be tested
+                y: the col cordinate for the piece in danger
+                board: a list of lists representing the chess board the piece is on
+                player: the player that is being tested
+
+            returns: 
+                True: if the piece is in danger
+                False: if the piece is not in danger
+                
+        """
         piece_row = x
         piece_col = y
 
