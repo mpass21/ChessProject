@@ -87,7 +87,7 @@ class chess_model_test(unittest.TestCase):
         check_model.board = clear()
         '''check pawn'''
         check_model.set_piece(3, 5, king_w)
-        check_model.set_piece(4, 6, pawn_b)
+        check_model.set_piece(2, 6, pawn_b)
         self.assertTrue(check_model.in_check(check_model.current_player))
         check_model.board = clear()
         '''basic not in check'''

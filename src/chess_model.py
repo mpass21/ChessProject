@@ -503,8 +503,8 @@ class ChessModel:
         """
 
         #checks if desired location is within bounds and a piece, if not it raises apropriate error
-        if 0 <= row < self.__nrows:
-            if 0 <= col < self.__ncols:
+        if 0 <= row < 8:
+            if 0 <= col < 8:
                 if piece is None or ChessPiece:
                     self.board[row][col] = piece
                 else:
