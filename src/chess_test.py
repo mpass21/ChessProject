@@ -469,7 +469,97 @@ class chess_model_test(unittest.TestCase):
         self.undoModel.move(promote)
         self.undoModel.undo()
         self.assertEqual(base, self.undoModel.board)
+
+    def test_piece(self):
+        model = ChessModel
+        rook = Rook(model.current_player)
+        model.board = clear()
+        model.set_piece(model,4, 3, rook)
+        model.set_piece(model, 0, 3, rook)
+        move = Move(4, 3, 5, 3)
+        self.assertTrue(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 4, 3)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 9, 3)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 4, 9)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        move = Move(3, 3, 3, 5)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 0, 3)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        model.board = clear()
+
+    def test_bishop(self):
+        model = ChessModel
+        bishop = Bishop(model.current_player)
+        model.board = clear()
+        model.set_piece(model, 5, 3, bishop)
+        model.set_piece(model, 3, 5, bishop)
+        self.assertTrue(isinstance(model.piece_at(model, 5,3), ChessPiece))
+        move = Move(5, 3, 7, 1)
+        self.assertTrue(bishop.is_valid_move(move, model.board))
+        move = Move(5, 3, 4, 4)
+        self.assertTrue(bishop.is_valid_move(move, model.board))
+        move = Move(5, 3, 2, 6)
+        self.assertFalse(bishop.is_valid_move(move, model.board))
+        move = Move(5, 3, 0, 3)
+        self.assertFalse(bishop.is_valid_move(move, model.board))
+        move = Move(5, 3, 4, 6)
+        self.assertFalse(bishop.is_valid_move(move, model.board))
+        model.board = clear()
+
+    def test_rook(self):
+        model = ChessModel
+        rook = Rook(model.current_player)
+        model.board = clear()
+        model.set_piece(model, 4, 3, rook)
+        model.set_piece(model, 6, 3, rook)
+        self.assertTrue(isinstance(model.piece_at(model, 4, 3), ChessPiece))
+        move = Move(4, 3, 5, 3)
+        self.assertTrue(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 2, 3)
+        self.assertTrue(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 4, 0)
+        self.assertTrue(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 4, 6)
+        self.assertTrue(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 5, 5)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 0, 0)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        move = Move(4, 3, 7, 3)
+        self.assertFalse(rook.is_valid_move(move, model.board))
+        model.board = clear()
+
+    def test_king(self):
+        model = ChessModel
+        king = King(model.current_player)
+        model.board = clear()
+        model.set_piece(model, 5, 3, king)
+        self.assertTrue(isinstance(model.piece_at(model, 5, 3), ChessPiece))
+        move = Move(5, 3, 7, 3)
+        self.assertFalse(king.is_valid_move(move, model.board))
+        move = Move(5, 3, 4, 3)
+        self.assertTrue(king.is_valid_move(move, model.board))
+        move = Move(5, 3, 5, 2)
+        self.assertTrue(king.is_valid_move(move, model.board))
+        move = Move(5, 3, 4, 2)
+        self.assertTrue(king.is_valid_move(move, model.board))
+        model.board = clear()
         
+
+
+       
+
+        
+
+
+    
+
+
+    
+
 if __name__ == '__main__':
     unittest.main()
     
